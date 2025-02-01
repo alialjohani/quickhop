@@ -1,0 +1,21 @@
+{
+  "name": "dynamogetitem",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "../build.sh"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.145",
+    "esbuild": "^0.23.1"
+  },
+  "projectName": "dynamoGetItem",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.637.0",
+    "@aws-sdk/lib-dynamodb": "^3.637.0"
+  }
+}

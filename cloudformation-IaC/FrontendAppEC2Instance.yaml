@@ -1,0 +1,107 @@
+Resources:
+  FrontendAppEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      SecurityGroupIds:
+        - !ImportValue FrontendAppSecurityGroup
+      IamInstanceProfile: !ImportValue QuickHopProfile
+      KeyName: quickhop_key
+      ImageId: ${{EC2InstanceImageId}}
+      Tags:
+        - Key: Name
+          Value: FrontendAppEC2Instance
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          ## cat /var/log/cloud-init-output.log (to read the logs at the end, run this manually)
+          set -e  # Exit on errors
+          set -x  # Enable command logging
+          export HOME=/root
+          echo ">>> Started the script"
+          sleep 30
+          PROJECT_NAME=hr-web-app-frontend
+          REGION=ca-central-1
+          SSM_APP_NAME=quickhop
+          REPO_CODECOMMIT="https://git-codecommit.ca-central-1.amazonaws.com/v1/repos/hr-web-app-frontend"
+          apt-get update -y
+          apt-get upgrade -y
+          # installs nvm (Node Version Manager), NPM, node
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+          export NVM_DIR="$HOME/.nvm"
+          . "$NVM_DIR/nvm.sh"
+          # Configure NVM in .bashrc
+          echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bashrc
+          echo '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"' >> ~/.bashrc
+          # Install Node.js and set default
+          nvm install 22
+          nvm alias default 22
+          # Add Node.js to PATH
+          echo 'export PATH="$HOME/.nvm/versions/node/$(nvm version)/bin:$PATH"' >> ~/.bashrc
+          export PATH="$HOME/.nvm/versions/node/$(nvm version)/bin:$PATH"
+          echo ">>> NVM, NPM, Node.js: installed."
+          snap install aws-cli --classic
+          # git source code
+          cd /tmp
+          git config --global credential.helper '!aws codecommit credential-helper $@'
+          git config --global credential.UseHttpPath true
+          git clone $REPO_CODECOMMIT
+          echo ">>> Source code cloned."
+          # Build, install packages, move it a specific directory
+          cd $PROJECT_NAME
+          ## prepare and create .env
+          cat <<EOF > production_variables.sh
+          #!/bin/bash
+          ## The following can be fetched after DB resource is created by CloudFormation Stack
+          echo "VITE_BACKEND_BASE_URL=\$(aws ssm get-parameter --name '/quickhop/backendBaseUrl' --query Parameter.Value --output text --region $REGION)" >> .env
+          echo "VITE_GOOGLE_CLIENT_ID=\$(aws ssm get-parameter --name '/quickhop/googleClientId' --query Parameter.Value --output text --region $REGION)" >> .env
+          echo "VITE_COGNITO_CLIENT_ID=\$(aws ssm get-parameter --name '/quickhop/cognitoClientId' --query Parameter.Value --output text --region $REGION)" >> .env
+          echo "VITE_COGNITO_DOMAIN=\$(aws ssm get-parameter --name '/quickhop/cognitoDomain' --query Parameter.Value --output text --region $REGION)" >> .env
+          echo "VITE_COGNITO_REDIRECT_URI=\$(aws ssm get-parameter --name '/quickhop/cognitoRedirectUri' --query Parameter.Value --output text --region $REGION)" >> .env
+          echo "Environment variables added successfully."
+          EOF
+          # Make the script executable
+          chmod +x production_variables.sh
+          # Execute the script
+          ./production_variables.sh
+          rm ./production_variables.sh
+          echo ">>> Env variables are ready."
+          # Start building
+          npm install
+          npm run build -y
+          # cp package.json dist/ May we donot need it
+          mkdir ~/$PROJECT_NAME
+          mv ./dist/* ~/$PROJECT_NAME
+          cd ../
+          rm -r ./$PROJECT_NAME
+          echo ">>> Code is built."
+          apt install nginx -y
+          cp -r ~/$PROJECT_NAME/* /var/www/html/
+          echo "
+          server {
+              listen 3000;
+              server_name _;  # Listen on all IP addresses
+              root /var/www/html;  # Path to your React build folder
+              index index.html;
+              location / {
+                  try_files \$uri /index.html;  # Handle routing for SPA
+              }
+              # Optional: Configure to serve static files with caching
+              location ~* \.(?:css|js|woff|woff2|eot|ttf|svg|png|jpg|jpeg|gif|ico|webp)\$ {
+                  try_files \$uri =404;
+                  expires 1y;
+                  add_header Cache-Control \"public, immutable, no-transform\";
+              }
+          }
+          " | tee /etc/nginx/sites-available/default > /dev/null
+          ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
+          systemctl restart nginx
+          ufw allow 3000
+          echo ">>> Script execution completed and the app is ready."
+
+Outputs:
+  FrontendAppEC2InstanceId:
+    Description: "ID of the EC2 instance"
+    Value: !Ref FrontendAppEC2Instance
+    Export:
+      Name: FrontendAppEC2InstanceId

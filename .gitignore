@@ -1,0 +1,16 @@
+# Common ignores for all projects
+**/node_modules/
+**/dist/
+**/.env
+**/.vscode/
+**/.DS_Store
+**/*.log
+**/coverage/
+**/tmp/
+**/src/logs
+
+# Environment-specific files
+web-app-backend/.production.env
+cloudformation-IaC/parameters.json
+lambda-functions/To-Do.txt
+lambda-functions/response.json

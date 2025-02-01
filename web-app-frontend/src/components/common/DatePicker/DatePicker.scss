@@ -1,0 +1,38 @@
+/* Fix for month display */
+.flatpickr-calendar {
+  overflow: visible !important;
+  z-index: 10000 !important;
+}
+
+/* Fix for date selector alignment */
+.flatpickr-day {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day:hover {
+  border-radius: 50% !important;
+  padding: 0 !important;
+}
+
+/* Ensure enough space for the calendar */
+.flatpickr-calendar {
+  max-width: 100%;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.flatpickr-month {
+  min-height: 40px;
+}
+
+// .flatpickr-input {
+//   pointer-events: none;
+//   /* Disable mouse interaction */
+//   cursor: not-allowed;
+//   /* Show a disabled cursor */
+//   background-color: #f5f5f5;
+//   /* Give it a read-only look */
+// }

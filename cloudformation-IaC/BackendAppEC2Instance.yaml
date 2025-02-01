@@ -1,0 +1,144 @@
+Resources:
+  BackendAppEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      SecurityGroupIds:
+        - !ImportValue BackendAppSecurityGroup
+      IamInstanceProfile: !ImportValue QuickHopProfile
+      KeyName: quickhop_key
+      ImageId: ${{EC2InstanceImageId}}
+      Tags:
+        - Key: Name
+          Value: BackendAppEC2Instance
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          ## cat /var/log/cloud-init-output.log (to read the logs at the end, run this manually)
+          set -e  # Exit on errors
+          set -x  # Enable command logging
+          export HOME=/root
+          echo ">>> Started the script"
+          apt-get update -y
+          apt-get upgrade -y
+          snap install aws-cli --classic
+          PROJECT_NAME=hr-web-app-backend
+          SSM_APP_NAME=quickhop
+          REGION=${{REGION}}
+          sleep 30
+          # installs nvm (Node Version Manager), NPM, node
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+          export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          # download and install Node.js (you may need to restart the terminal)
+          nvm install 22
+          echo ">>> NVM, NPM, Node.js: installed."          
+          apt-get install postgresql-client -y
+          # git source code
+          REPO_CODECOMMIT=${{REPO_GIT_BACKEND}}
+          cd /tmp          
+          git config --global credential.helper '!aws codecommit credential-helper $@'
+          git config --global credential.UseHttpPath true
+          git clone $REPO_CODECOMMIT
+          echo ">>> Source code cloned."
+          # Build, install packages, move it a specific directory
+          cd $PROJECT_NAME
+          npm install
+          npm install sequelize # to prevent compiler errors, assure installing the package
+          npm run build -y
+          cp package.json dist/
+          echo ">>> Code is built."
+          cd ./dist
+          npm prune --omit=dev
+          npm install --production
+          npm install -g pm2
+          npm install pg
+          npm install pg-hstore
+          npm install sequelize
+          cd ..
+          mkdir ~/$PROJECT_NAME
+          mv ./dist/* ~/$PROJECT_NAME
+          cd ..
+          rm -r $PROJECT_NAME
+          cd ~/$PROJECT_NAME
+          echo ">>> Code is moved to ~/$PROJECT_NAME."
+          # Create the production_variables.sh script
+          cat <<EOF > production_variables.sh
+          #!/bin/bash
+          ## The following can be fetched after DB resource is created by CloudFormation Stack
+          echo "environment=PROD" >> .env
+          echo "DB_ENDPOINT=\$(aws ssm get-parameter --name '/quickhop/dbEndpoint' --query Parameter.Value --output text --region $REGION)" >> .env
+          echo "DB_NAME=\$(aws ssm get-parameter --name '/quickhop/dbName' --query Parameter.Value --output text --region $REGION)" >> .env
+          echo "DB_USER=\$(aws ssm get-parameter --name '/quickhop/dbUser' --query Parameter.Value --output text --region $REGION)" >> .env
+          echo "DB_PASSWORD=\$(aws ssm get-parameter --name '/quickhop/dbPassword' --query Parameter.Value --output text --region $REGION)" >> .env
+          ## The following can be fetched after manually uploaded to SSM as prod values          
+          echo "ALLOWED_ORIGIN=\$(aws ssm get-parameter --name '/$SSM_APP_NAME/allowedOrigin' --query Parameter.Value --output text --region $REGION)" >> .env          
+          echo "AWS_REGION=\$(aws ssm get-parameter --name '/$SSM_APP_NAME/awsRegion' --query Parameter.Value --output text --region $REGION)" >> .env
+          echo "AWS_S3_BUCKET_NAME=\$(aws ssm get-parameter --name '/$SSM_APP_NAME/awsS3BucketName' --query Parameter.Value --output text --region $REGION)" >> .env
+          echo "GOOGLE_CLIENT_ID=\$(aws ssm get-parameter --name '/$SSM_APP_NAME/googleClientId' --query Parameter.Value --output text --region $REGION)" >> .env
+          echo "COGNITO_CLIENT_ID=\$(aws ssm get-parameter --name '/$SSM_APP_NAME/cognitoClientId' --query Parameter.Value --output text --region $REGION)" >> .env
+          echo "ADMIN_EMAIL_ID=\$(aws ssm get-parameter --name '/$SSM_APP_NAME/adminEmailId' --query Parameter.Value --output text --region $REGION)" >> .env
+          echo "OPENAI_API_KEY=\$(aws ssm get-parameter --name '/$SSM_APP_NAME/openaiApiKey' --query Parameter.Value --output text --region $REGION)" >> .env
+          echo "OPENAI_MODEL=\$(aws ssm get-parameter --name '/$SSM_APP_NAME/openaiModel' --query Parameter.Value --output text --region $REGION)" >> .env          
+          echo "RECRUITMENT_PHONE=\$(aws ssm get-parameter --name '/$SSM_APP_NAME/recruitmentPhone' --query Parameter.Value --output text --region $REGION)" >> .env
+          echo "DynamoDB_TABLE_INTERVIEWEES=\$(aws ssm get-parameter --name '/$SSM_APP_NAME/dynamoDBTableInterviewees' --query Parameter.Value --output text --region $REGION)" >> .env
+          echo "DynamoDB_TABLE_INITIAL_MESSAGE=\$(aws ssm get-parameter --name '/$SSM_APP_NAME/dynamoDBTableInitialMessage' --query Parameter.Value --output text --region $REGION)" >> .env
+          echo "DynamoDB_TABLE_COUNTER=\$(aws ssm get-parameter --name '/$SSM_APP_NAME/dynamoDBTableCounter' --query Parameter.Value --output text --region $REGION)" >> .env
+          echo "Environment variables added successfully."
+          EOF
+          # Make the script executable
+          chmod +x production_variables.sh
+          # Execute the script
+          ./production_variables.sh
+          rm ./production_variables.sh
+          echo ">>> Env variables are ready."
+          # Run the app
+          pm2 start server.js --name "quickhop"
+          env PATH=$PATH:/usr/bin pm2 startup systemd -u root --hp /root
+          pm2 save
+          # Completed
+          echo ">>> Server is ready."
+          # Create simple ready script to add a company and recruiter in DB
+          cat <<EOF > Create_Company_Recruiter.sh
+          #!/bin/bash
+          sudo apt-get install jq
+          # Define authorization token and user type
+          AUTH_TOKEN="xyz"
+          USER_TYPE="ADMIN"
+          COMPANY_NAME="TechT"
+          REC_EMAIL=""
+          REC_PASSWORD=""
+          COGNITO_User_pool_ID=""
+          COMPANY_RESPONSE=\$(curl -s -X POST http://localhost:3000/api/companies \
+            -H "Authorization: \$AUTH_TOKEN" \
+            -H "usertype: \$USER_TYPE" \
+            -H "Content-Type: application/json" \
+            -d "{\"name\": \"\$COMPANY_NAME\", \"knowledge_base\": \"knowledge_base\"}")
+          echo "Company Response: \$COMPANY_RESPONSE"
+          COMPANY_ID=\$(echo "\$COMPANY_RESPONSE" | jq -r '.data.id')
+          echo "Company ID: \$COMPANY_ID"
+          RECRUITER_RESPONSE=\$(curl -s -X POST http://localhost:3000/api/recruiters \
+            -H "Authorization: \$AUTH_TOKEN" \
+            -H "usertype: \$USER_TYPE" \
+            -H "Content-Type: application/json" \
+            -d "{ \"companyId\": \"\$COMPANY_ID\", \"email\": \"\$REC_EMAIL\",  \"firstName\": \"rec first name\",  \"lastName\": \"rec last name\", \"phone\": \"+16044444444\" }")
+          echo "Recruiter Response: \$RECRUITER_RESPONSE"
+          aws cognito-idp admin-create-user \
+              --user-pool-id \$COGNITO_User_pool_ID \
+              --username \$REC_EMAIL \
+              --user-attributes Name=email,Value=\$REC_EMAIL \
+              --temporary-password \$REC_PASSWORD \
+              --message-action SUPPRESS
+          echo "Completed."
+          EOF
+          chmod +x Create_Company_Recruiter.sh
+          mv Create_Company_Recruiter.sh ~
+          echo ">>> The script is completed."
+
+
+Outputs:
+  BackendAppEC2InstanceId:
+    Description: "ID of the EC2 instance"
+    Value: !Ref BackendAppEC2Instance
+    Export:
+      Name: BackendAppEC2InstanceId

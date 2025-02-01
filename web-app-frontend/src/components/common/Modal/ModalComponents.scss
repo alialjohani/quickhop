@@ -1,0 +1,10 @@
+.btn-close {
+  background-color: transparent;
+  border: none;
+}
+
+.btn-close::before {
+  content: "×";
+  font-size: 1.5rem;
+  color: black;
+}

@@ -1,0 +1,90 @@
+[
+    {
+        "ParameterKey": "awsRegion",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "awsS3BucketName",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "cognitoDomain",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "cognitoClientId",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "cognitoRedirectUri",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "googleClientId",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "openaiApiKey",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "openaiModel",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "backendBaseUrl",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "allowedOrigin",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "adminEmailId",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "dbIdentifier",
+        "ParameterValue": "quickhopDBIdentifier"
+    },
+    {
+        "ParameterKey": "dbName",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "dbUser",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "SSLCertificateArn",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "VPC",
+        "ParameterValue": "vpc-01d23333333333333"
+    },
+    {
+        "ParameterKey": "Subnet1",
+        "ParameterValue": "subnet-06788222222222221"
+    },
+    {
+        "ParameterKey": "Subnet2",
+        "ParameterValue": "subnet-06788222222222222"
+    },
+    {
+        "ParameterKey": "recruitmentPhone",
+        "ParameterValue": "+16047777777"
+    },
+    {
+        "ParameterKey": "DynamoDBTableInterviewees",
+        "ParameterValue": "quickhop_Interviewees"
+    },
+    {
+        "ParameterKey": "DynamoDBTableInitialMessage",
+        "ParameterValue": "quickhop_Initial_Message"
+    },
+    {
+        "ParameterKey": "DynamoDBTableCounter",
+        "ParameterValue": "quickhop_CallerDidCallCounter"
+    }
+]

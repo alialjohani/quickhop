@@ -1,0 +1,94 @@
+Parameters:
+  dbPort:
+    Type: Number
+    Description: The DB port number passed from the parent template.
+
+Resources:
+  FrontendAppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: "quickhop-frontend-ec2-sg"
+      GroupDescription: "Allow SSH and HTTP access"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 3000
+          ToPort: 3000
+          CidrIp: 0.0.0.0/0
+
+  BackendAppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: "quickhop-backend-ec2-sg"
+      GroupDescription: "Allow SSH and HTTP access"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 3000
+          ToPort: 3000
+          CidrIp: 0.0.0.0/0
+
+  DBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: "quickhop-db-sg"
+      GroupDescription: "quickhop-db-sg"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: !Ref dbPort 
+          ToPort: !Ref dbPort
+          SourceSecurityGroupId: !GetAtt BackendAppSecurityGroup.GroupId
+        - IpProtocol: tcp
+          FromPort: !Ref dbPort 
+          ToPort: !Ref dbPort
+          CidrIp: 0.0.0.0/0  # Allows anyone to connect (Use only for testing)
+
+  BackendLoadBalancerSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: "quickhop-back-lb-sg"
+      GroupDescription: "quickhop-back-lb-sg"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+
+  FrontendLoadBalancerSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: "quickhop-front-lb-sg"
+      GroupDescription: "quickhop-front-lb-sg"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+
+Outputs:
+  FrontendAppSecurityGroup:
+    Value: !Ref FrontendAppSecurityGroup
+    Export:
+      Name: FrontendAppSecurityGroup
+  BackendAppSecurityGroup:
+    Value: !Ref BackendAppSecurityGroup
+    Export:
+      Name: BackendAppSecurityGroup
+  DBSecurityGroupId:
+    Value: !GetAtt DBSecurityGroup.GroupId
+    Export:
+      Name: DBSecurityGroupId
+  BackendLoadBalancerSGId:
+    Value: !GetAtt BackendLoadBalancerSG.GroupId
+    Export:
+      Name: BackendLoadBalancerSGId
+  FrontendLoadBalancerSGId:
+    Value: !GetAtt FrontendLoadBalancerSG.GroupId
+    Export:
+      Name: FrontendLoadBalancerSGId

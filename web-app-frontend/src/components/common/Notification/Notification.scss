@@ -1,0 +1,64 @@
+.notification {
+  position: sticky;
+  left: 0;
+  right: 0;
+  padding: 15px;
+  text-align: center;
+  z-index: 1030;
+  top: 0;
+  /* Sticks it under the navbar */
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60px;
+  /* Ensure enough height for content and button */
+}
+
+// Success notification styles
+.notification-success {
+  background-color: #d4edda;
+  /* Light green background */
+  color: #155724;
+  /* Dark green text */
+  position: relative;
+  /* Required for absolute positioning of close button */
+}
+
+// Error notification styles
+.notification-error {
+  background-color: #f8d7da;
+  /* Light red background */
+  color: #721c24;
+  /* Dark red text */
+  position: relative;
+  /* Required for absolute positioning of close button */
+}
+
+// Flex layout for message and close button
+.notification span {
+  flex-grow: 1;
+  /* Make the message take up as much space as possible */
+  padding-right: 15px;
+  /* Add some space between the message and the close button */
+}
+
+// Close button styles
+.btn-close {
+  background: none;
+  /* Remove default background */
+  border: none;
+  /* Remove default border */
+  cursor: pointer;
+  /* Change cursor to pointer */
+  font-size: 1.5rem;
+  /* Ensure visibility of icon */
+  color: #000;
+  /* Explicit color for icon */
+  padding: 5px;
+  /* Small padding for better touch area */
+  display: flex;
+  /* Flexbox to align the icon */
+  align-items: center;
+  /* Center icon vertically */
+}

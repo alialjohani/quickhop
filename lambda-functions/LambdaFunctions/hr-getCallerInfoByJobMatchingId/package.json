@@ -1,0 +1,23 @@
+{
+  "name": "hr-getcallerinfobyjobmatchingid",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "../project-setup/deploy.sh"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.145",
+    "@types/node": "^22.5.2"
+  },
+  "projectName": "hr-getCallerInfoByJobMatchingId",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.637.0",
+    "@aws-sdk/lib-dynamodb": "^3.637.0",
+    "dotenv": "^16.4.5"
+  }
+}

@@ -1,0 +1,59 @@
+Parameters:
+  VPC:
+    Type: String
+    Description: The default VPC ID.
+
+Resources:
+  BackendTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: BackendTargetGroup
+      Protocol: HTTP
+      Port: 3000
+      VpcId: !Ref VPC
+      TargetType: instance
+      Targets:
+        - Id: !ImportValue BackendAppEC2InstanceId # from BackendAppEC2Instance.yaml
+          Port: 3000
+      HealthCheckProtocol: HTTP
+      HealthCheckPort: 3000
+      HealthCheckPath: "/health"
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      UnhealthyThresholdCount: 2
+      Matcher:
+        HttpCode: "200"
+
+  FrontendTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: FrontendTargetGroup
+      Protocol: HTTP
+      Port: 3000
+      VpcId: !Ref VPC
+      TargetType: instance
+      Targets:
+        - Id: !ImportValue FrontendAppEC2InstanceId # from FrontendAppEC2Instance.yaml
+          Port: 3000
+      HealthCheckProtocol: HTTP
+      HealthCheckPort: 3000
+      HealthCheckPath: "/"
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      UnhealthyThresholdCount: 2
+      Matcher:
+        HttpCode: "200"
+
+Outputs:
+  BackendTargetGroupARN:
+    Description: "ARN of the Backend Target Group"
+    Value: !GetAtt BackendTargetGroup.TargetGroupArn
+    Export:
+      Name: BackendTargetGroupARN
+  FrontendTargetGroupARN:
+    Description: "ARN of the Frontend Target Group"
+    Value: !GetAtt FrontendTargetGroup.TargetGroupArn
+    Export:
+      Name: FrontendTargetGroupARN

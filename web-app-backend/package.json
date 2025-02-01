@@ -1,0 +1,44 @@
+{
+  "name": "hr-web-app-backend",
+  "version": "1.0.0",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "npx tsc && mkdir ./dist/tmp",
+    "start": "node server.js",
+    "dev": "nodemon src/server.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.693.0",
+    "@aws-sdk/client-dynamodb": "^3.721.0",
+    "@aws-sdk/client-s3": "^3.709.0",
+    "@aws-sdk/client-secrets-manager": "^3.726.1",
+    "@aws-sdk/lib-dynamodb": "^3.721.0",
+    "@aws-sdk/s3-request-presigner": "^3.709.0",
+    "@langchain/openai": "^0.3.14",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "google-auth-library": "^9.15.0",
+    "jsonwebtoken": "^9.0.2",
+    "jspdf": "^2.5.2",
+    "langchain": "^0.3.6",
+    "node-cron": "^3.0.3",
+    "pg": "^8.13.1",
+    "pino": "^9.6.0",
+    "sequelize": "^6.37.5"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^22.8.4",
+    "@types/node-cron": "^3.0.11",
+    "@types/pino": "^7.0.4",
+    "concurrently": "^9.0.1",
+    "nodemon": "^3.1.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  }
+}

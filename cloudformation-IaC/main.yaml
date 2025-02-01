@@ -1,0 +1,192 @@
+Parameters:
+  awsRegion:
+    Type: String
+    Description: Region to create the resources on.
+  
+  # environment:
+  #   Type: String
+  #   ADDED in the UserData script, in Backend initial script
+
+  awsS3BucketName:
+    Type: String
+    Description: The bucket must already exist to upload/download files from.
+
+  cognitoDomain:
+    Type: String
+    Description: Cognito domain.
+
+  cognitoClientId:
+    Type: String
+    Description: The Client ID.
+
+  cognitoRedirectUri:
+    Type: String
+    Description: Cognito redirect uri, that must end with /callback. This uri must be already configured in Cognito.
+
+  googleClientId:
+    Type: String
+    Description: Google Client Id for SSO (to be used with Job Seeker Loign to the app).
+
+  openaiApiKey:
+    Type: String
+    Description: OpenAI key to access the model.
+
+  openaiModel:
+    Type: String
+    Description: OpenAI model type.
+
+  backendBaseUrl:
+    Type: String
+    Description: API URL endpoint.
+
+  allowedOrigin:
+    Type: String
+    Description: Provide frontend https url to be added as allowed origin in backend server.
+
+  adminEmailId:
+    Type: String
+    Description: Any email to be used as an admin email to access backend.
+
+  dbIdentifier:
+    Type: String
+    Description: The db name on the aws console.
+    Default: quickhopdb
+
+  dbName:
+    Type: String
+    Description: The actual db name.
+
+  dbUser:
+    Type: String
+    Description: The username for the RDS database.
+
+  dbPort:
+    Type: Number
+    Description: The DB port number is fixed here as the default value, without reading from Parameters.json.
+    Default: 5432
+
+  SSLCertificateArn:
+    Type: String
+    Description: SSL certification that should be configured in AWS ACM, and its ARN value should be passed.
+
+  VPC:
+    Type: "AWS::EC2::VPC::Id"
+    Description: The default VPC ID.
+
+  Subnet1:
+    Type: "AWS::EC2::Subnet::Id"
+    Description: "Public subnet. The other subnet must be in a different Availability Zone."
+
+  Subnet2:
+    Type: "AWS::EC2::Subnet::Id"
+    Description: "Public subnet. The other subnet must be in a different Availability Zone."
+  
+  recruitmentPhone:
+    Type: String
+    Description: Phone number assigned to the AWS Connect main IVR to receive the interview calls.
+  
+  dynamoDBTableInterviewees:
+    Type: String
+    Description: The table name to save interviewees information.
+  
+  dynamoDBTableInitialMessage:
+    Type: String
+    Description: The table name that stores the initial prompt message for the AI.
+  
+  dynamoDBTableCounter:
+    Type: String
+    Description: The table name that is used as a counter for each job post.
+
+Resources:
+  SSMParameters:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/SSMParameters.yaml"
+      Parameters:
+        awsRegion: !Ref awsRegion
+        awsS3BucketName: !Ref awsS3BucketName
+        cognitoDomain: !Ref cognitoDomain
+        cognitoClientId: !Ref cognitoClientId
+        cognitoRedirectUri: !Ref cognitoRedirectUri
+        googleClientId: !Ref googleClientId
+        openaiApiKey: !Ref openaiApiKey
+        openaiModel: !Ref openaiModel
+        backendBaseUrl: !Ref backendBaseUrl
+        allowedOrigin: !Ref allowedOrigin
+        dbIdentifier: !Ref dbIdentifier
+        dbName: !Ref dbName
+        dbUser: !Ref dbUser
+        adminEmailId: !Ref adminEmailId
+        recruitmentPhone: !Ref recruitmentPhone
+        dynamoDBTableInterviewees: !Ref dynamoDBTableInterviewees
+        dynamoDBTableInitialMessage: !Ref dynamoDBTableInitialMessage
+        dynamoDBTableCounter: !Ref dynamoDBTableCounter
+
+
+  RoleResources:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/RoleResources.yaml"
+
+
+  SGResources:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/SGResources.yaml"
+      Parameters:
+        dbPort: !Ref dbPort
+
+
+  DBResources:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: SGResources
+    Properties:
+      TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/DBResources.yaml"
+      Parameters:
+        dbIdentifier: !Ref dbIdentifier
+        dbName: !Ref dbName
+        dbUser: !Ref dbUser
+        dbPort: !Ref dbPort
+
+
+  BackendAppEC2Instance:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+      - SSMParameters
+      - DBResources
+      - RoleResources
+    Properties:
+      TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/${{TEMP_FILE_BackendAppEC2Instance_NAME}}"
+
+
+  FrontendAppEC2Instance:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+      - SSMParameters
+      - RoleResources
+    Properties:
+      TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/${{TEMP_FILE_FrontendAppEC2Instance_NAME}}"
+
+
+  TargetGroupResources:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+      - BackendAppEC2Instance
+      - FrontendAppEC2Instance
+    Properties:
+      TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/TargetGroupResources.yaml"
+      Parameters:
+        VPC: !Ref VPC
+
+
+  LoadBalancerResources:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+      - SGResources
+      - TargetGroupResources
+    Properties:
+      TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/LoadBalancerResources.yaml"
+      Parameters:
+        SSLCertificateArn: !Ref SSLCertificateArn
+        Subnet1: !Ref Subnet1
+        Subnet2: !Ref Subnet2

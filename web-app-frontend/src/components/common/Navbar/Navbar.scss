@@ -1,0 +1,17 @@
+.dropdown-toggle::after {
+  display: none;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: transparent !important; // Remove the default hover background color
+  color: inherit; // Optional: to keep the text color unchanged
+}
+
+.logo {
+  height: 40px;
+  /* Adjust as needed */
+  width: auto;
+  /* Make it circular */
+  margin-right: 10px;
+}

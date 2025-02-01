@@ -1,0 +1,71 @@
+Parameters:
+  SSLCertificateArn:
+    Type: String
+    Description: SSL Certificate Arn from ACM.
+
+  Subnet1:
+    Type: "AWS::EC2::Subnet::Id"
+    Description: "Public subnet. The other subnet must be in a different Availability Zone."
+
+  Subnet2:
+    Type: "AWS::EC2::Subnet::Id"
+    Description: "Public subnet. The other subnet must be in a different Availability Zone."
+
+Resources:
+  BackendLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: BackendLoadBalancer
+      Subnets:
+        - !Ref Subnet1
+        - !Ref Subnet2
+      SecurityGroups:
+        - !ImportValue BackendLoadBalancerSGId
+      Scheme: internet-facing
+      Type: application
+
+  BackendLoadBalancerListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !ImportValue BackendTargetGroupARN
+      LoadBalancerArn: !Ref BackendLoadBalancer
+      Port: 443
+      Protocol: HTTPS
+      SslPolicy: ELBSecurityPolicy-TLS13-1-2-2021-06
+      Certificates:
+        - CertificateArn: !Ref SSLCertificateArn
+
+  FrontendLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: FrontendLoadBalancer
+      Subnets:
+        - !Ref Subnet1
+        - !Ref Subnet2
+      SecurityGroups:
+        - !ImportValue FrontendLoadBalancerSGId
+      Scheme: internet-facing
+      Type: application
+
+  FrontendLoadBalancerListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !ImportValue FrontendTargetGroupARN
+      LoadBalancerArn: !Ref FrontendLoadBalancer
+      Port: 443
+      Protocol: HTTPS
+      SslPolicy: ELBSecurityPolicy-TLS13-1-2-2021-06
+      Certificates:
+        - CertificateArn: !Ref SSLCertificateArn
+
+Outputs:
+  BackendLoadBalancerDNS:
+    Description: "DNS name of the Backend Load Balancer"
+    Value: !GetAtt BackendLoadBalancer.DNSName
+  FrontendLoadBalancerDNS:
+    Description: "DNS name of the Frontend Load Balancer"
+    Value: !GetAtt FrontendLoadBalancer.DNSName

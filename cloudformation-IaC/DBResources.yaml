@@ -1,0 +1,55 @@
+Parameters:
+  dbIdentifier:
+    Type: String
+    Description: To be passed from the parent template.
+
+  dbName:
+    Type: String
+    Description: To be passed from the parent template.
+
+  dbUser:
+    Type: String
+    Description: To be passed from the parent template.
+
+  dbPort:
+    Type: Number
+    Description: To be passed from the parent template.
+
+Resources:
+  QuickHopDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: !Ref dbIdentifier
+      AllocatedStorage: 20
+      DBInstanceClass: db.t4g.micro
+      Engine: postgres
+      MasterUsername: !Ref dbUser
+      ManageMasterUserPassword: true
+      VPCSecurityGroups:
+        - !ImportValue DBSecurityGroupId
+      PubliclyAccessible: true
+      DBName: !Ref dbName
+      Port: !Ref dbPort
+
+  ## Save data to SSM to be used later in .env production (production environment variables)
+  QuickHopDBHostParameterPassword:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "/quickhop/dbPassword"
+      Type: String
+      Value: !GetAtt QuickHopDB.MasterUserSecret.SecretArn
+  
+  QuickHopDBHostParameterEndpoint:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "/quickhop/dbEndpoint"
+      Type: String
+      Value: !GetAtt QuickHopDB.Endpoint.Address
+
+Outputs:
+  DBSecretName:
+    Description: "Secret name created for RDS instance in Secrets Manager"
+    Value: !GetAtt QuickHopDB.MasterUserSecret.SecretArn
+  DBHost:
+    Description: "DB endpoint/DB Host"
+    Value: !GetAtt QuickHopDB.Endpoint.Address
