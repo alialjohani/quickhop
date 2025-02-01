@@ -105,7 +105,7 @@ Resources:
           #!/bin/bash
           sudo apt-get install jq
           # Define authorization token and user type
-          AUTH_TOKEN="xyz"
+          AUTH_TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDAiLCJ1c2VydHlwZSI6IkFETUlOIiwiaWF0IjoxNzA3MDk2MDAwfQ.dQw4w9WgXcQ"
           USER_TYPE="ADMIN"
           COMPANY_NAME="TechT"
           REC_EMAIL=""

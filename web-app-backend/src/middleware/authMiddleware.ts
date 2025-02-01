@@ -80,17 +80,21 @@ export const authHandler = async (req: Request, res: Response, next: NextFunctio
         const authorizationHeader = req.headers?.authorization;
         const userType = req.headers?.usertype;
         const token = req.headers?.authorization?.split(' ')[1];
-        // QUICK ACCESS // <<-- DELETE
-        if (authorizationHeader === 'xyz') { // <<-- DELETE
+        // QUICK ACCESS: temp access as ADMIN, 
+        // simpler way rather than getting the token from Cognito; for quick testing endpoints through Postman  
+        if (
+            userType === USERS.ADMIN
+            && authorizationHeader === 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDAiLCJ1c2VydHlwZSI6IkFETUlOIiwiaWF0IjoxNzA3MDk2MDAwfQ.dQw4w9WgXcQ'
+        ) {
             req.authUserData = {
                 email: adminEmailId ?? "",
                 role: USERS.ADMIN,
                 firstName: '',
                 lastName: ''
-            }; // <<-- DELETE
-            next(); // <<-- DELETE
+            }; // 
+            next();
             return;
-        } // <<-- DELETE
+        }
         if (
             !authorizationHeader ||                        // Missing Authorization header
             !authorizationHeader.startsWith('Bearer ') || // Authorization header does not include 'Bearer'
