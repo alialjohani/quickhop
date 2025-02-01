@@ -20,10 +20,11 @@ Resources:
           export HOME=/root
           echo ">>> Started the script"
           sleep 30
-          PROJECT_NAME=hr-web-app-frontend
-          REGION=ca-central-1
+          MAIN_PROJECT_NAME=${{MAIN_PROJECT_NAME}}
+          FRONTEND_PROJECT_NAME=${{FRONTEND_PROJECT_NAME}}
+          REGION=${{REGION}}
+          REPO_CODECOMMIT=${{REPO_GIT}}
           SSM_APP_NAME=quickhop
-          REPO_CODECOMMIT="https://git-codecommit.ca-central-1.amazonaws.com/v1/repos/hr-web-app-frontend"
           apt-get update -y
           apt-get upgrade -y
           # installs nvm (Node Version Manager), NPM, node
@@ -41,6 +42,9 @@ Resources:
           export PATH="$HOME/.nvm/versions/node/$(nvm version)/bin:$PATH"
           echo ">>> NVM, NPM, Node.js: installed."
           snap install aws-cli --classic
+          # install nginx
+          apt install nginx -y
+          echo ">>> nginx: installed."
           # git source code
           cd /tmp
           git config --global credential.helper '!aws codecommit credential-helper $@'
@@ -48,7 +52,7 @@ Resources:
           git clone $REPO_CODECOMMIT
           echo ">>> Source code cloned."
           # Build, install packages, move it a specific directory
-          cd $PROJECT_NAME
+          cd $MAIN_PROJECT_NAME/$FRONTEND_PROJECT_NAME
           ## prepare and create .env
           cat <<EOF > production_variables.sh
           #!/bin/bash
@@ -69,14 +73,12 @@ Resources:
           # Start building
           npm install
           npm run build -y
-          # cp package.json dist/ May we donot need it
-          mkdir ~/$PROJECT_NAME
-          mv ./dist/* ~/$PROJECT_NAME
-          cd ../
-          rm -r ./$PROJECT_NAME
+          mkdir ~/$FRONTEND_PROJECT_NAME
+          mv ./dist/* /var/www/html/
+          cd ../..
+          rm -r ./$MAIN_PROJECT_NAME
           echo ">>> Code is built."
-          apt install nginx -y
-          cp -r ~/$PROJECT_NAME/* /var/www/html/
+          # config nginx
           echo "
           server {
               listen 3000;

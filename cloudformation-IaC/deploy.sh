@@ -1,14 +1,17 @@
 #!/bin/bash
 
-# Variables
+# Variables (to be manually added)
 REGION="ca-central-1"
+MAIN_PROJECT_NAME="quickhop"
+FRONTEND_PROJECT_NAME="web-app-frontend"
+BACKEND_PROJECT_NAME="web-app-backend"
 EC2InstanceImageId=ami-0bee12a638c7a8942 ## imageId must be compatible with the Region
-S3_BUCKET_NAME="quickhop-stack-bucket"
+S3_BUCKET_NAME="quickhop-stack-bucket" ## S3 bucket already created
 MAIN_STACK_NAME="quickhop-stack"
-REPO_GIT_FRONTEND="https://git-codecommit.ca-central-1.amazonaws.com/v1/repos/hr-web-app-frontend"
-REPO_GIT_BACKEND="https://git-codecommit.ca-central-1.amazonaws.com/v1/repos/hr-web-app-backend"
 
-# Main files' names
+REPO_GIT="https://git-codecommit.ca-central-1.amazonaws.com/v1/repos/quickhop"
+
+# Main files' names (to be manually added)
 FILE_SSMParameters_NAME="SSMParameters.yaml"
 FILE_RoleResources_NAME="RoleResources.yaml"
 FILE_SGResources_NAME="SGResources.yaml"
@@ -25,23 +28,31 @@ TEMP_FILE_MAIN_TEMPLATE="${TMP_BASE}${FILE_MAIN_TEMPLATE}"
 TEMP_FILE_FrontendAppEC2Instance_NAME="${TMP_BASE}${FILE_FrontendAppEC2Instance_NAME}"
 TEMP_FILE_BackendAppEC2Instance_NAME="${TMP_BASE}${FILE_BackendAppEC2Instance_NAME}"
 
-# Step 1: Replace placeholders with the actual S3 bucket name in the main-template.yaml file
+# Replace placeholders with the actual S3 bucket name in the main-template.yaml file
 echo "Replacing the placeholders ..."
 
+# Replace vars in main.yaml
 sed -e "s|\${{S3BucketName}}|$S3_BUCKET_NAME|g" \
 -e "s|\${{REGION}}|$REGION|g" \
 -e "s|\${{TEMP_FILE_FrontendAppEC2Instance_NAME}}|$TEMP_FILE_FrontendAppEC2Instance_NAME|g" \
 -e "s|\${{TEMP_FILE_BackendAppEC2Instance_NAME}}|$TEMP_FILE_BackendAppEC2Instance_NAME|g" \
 $FILE_MAIN_TEMPLATE > $TEMP_FILE_MAIN_TEMPLATE
 
+# Replace vars in Frontend Resource file
 sed -e "s|\${{REGION}}|$REGION|g" \
+-e "s|\${{MAIN_PROJECT_NAME}}|$MAIN_PROJECT_NAME|g" \
+-e "s|\${{FRONTEND_PROJECT_NAME}}|$FRONTEND_PROJECT_NAME|g" \
 -e "s|\${{EC2InstanceImageId}}|$EC2InstanceImageId|g" \
--e "s|\${{REPO_GIT_FRONTEND}}|$REPO_GIT_FRONTEND|g" \
+-e "s|\${{REPO_GIT}}|$REPO_GIT|g" \
 $FILE_FrontendAppEC2Instance_NAME > $TEMP_FILE_FrontendAppEC2Instance_NAME
 
+
+# Replace vars in Backend Resource file
 sed -e "s|\${{REGION}}|$REGION|g" \
+-e "s|\${{MAIN_PROJECT_NAME}}|$MAIN_PROJECT_NAME|g" \
+-e "s|\${{BACKEND_PROJECT_NAME}}|$BACKEND_PROJECT_NAME|g" \
 -e "s|\${{EC2InstanceImageId}}|$EC2InstanceImageId|g" \
--e "s|\${{REPO_GIT_BACKEND}}|$REPO_GIT_BACKEND|g" \
+-e "s|\${{REPO_GIT}}|$REPO_GIT|g" \
 $FILE_BackendAppEC2Instance_NAME > $TEMP_FILE_BackendAppEC2Instance_NAME
 
 

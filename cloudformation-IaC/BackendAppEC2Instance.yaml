@@ -14,17 +14,20 @@ Resources:
       UserData:
         Fn::Base64: |
           #!/bin/bash
+          ########## Objective 1: Config and run backend web app ##########
           ## cat /var/log/cloud-init-output.log (to read the logs at the end, run this manually)
           set -e  # Exit on errors
           set -x  # Enable command logging
           export HOME=/root
           echo ">>> Started the script"
+          REGION=${{REGION}}
+          MAIN_PROJECT_NAME=${{MAIN_PROJECT_NAME}}
+          BACKEND_PROJECT_NAME=${{BACKEND_PROJECT_NAME}}
+          REPO_CODECOMMIT=${{REPO_GIT}}
           apt-get update -y
           apt-get upgrade -y
           snap install aws-cli --classic
-          PROJECT_NAME=hr-web-app-backend
           SSM_APP_NAME=quickhop
-          REGION=${{REGION}}
           sleep 30
           # installs nvm (Node Version Manager), NPM, node
           curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
@@ -35,14 +38,13 @@ Resources:
           echo ">>> NVM, NPM, Node.js: installed."          
           apt-get install postgresql-client -y
           # git source code
-          REPO_CODECOMMIT=${{REPO_GIT_BACKEND}}
           cd /tmp          
           git config --global credential.helper '!aws codecommit credential-helper $@'
           git config --global credential.UseHttpPath true
           git clone $REPO_CODECOMMIT
           echo ">>> Source code cloned."
           # Build, install packages, move it a specific directory
-          cd $PROJECT_NAME
+          cd $MAIN_PROJECT_NAME/$BACKEND_PROJECT_NAME
           npm install
           npm install sequelize # to prevent compiler errors, assure installing the package
           npm run build -y
@@ -56,12 +58,12 @@ Resources:
           npm install pg-hstore
           npm install sequelize
           cd ..
-          mkdir ~/$PROJECT_NAME
-          mv ./dist/* ~/$PROJECT_NAME
-          cd ..
-          rm -r $PROJECT_NAME
-          cd ~/$PROJECT_NAME
-          echo ">>> Code is moved to ~/$PROJECT_NAME."
+          mkdir ~/$BACKEND_PROJECT_NAME
+          mv ./dist/* ~/$BACKEND_PROJECT_NAME
+          cd ../..
+          rm -r $MAIN_PROJECT_NAME
+          cd ~/$BACKEND_PROJECT_NAME
+          echo ">>> Code is moved to ~/$BACKEND_PROJECT_NAME."
           # Create the production_variables.sh script
           cat <<EOF > production_variables.sh
           #!/bin/bash
@@ -98,7 +100,7 @@ Resources:
           pm2 save
           # Completed
           echo ">>> Server is ready."
-          # Create simple ready script to add a company and recruiter in DB
+          ########## Objective 2: Create simple ready script to add a company and recruiter in DB ##########
           cat <<EOF > Create_Company_Recruiter.sh
           #!/bin/bash
           sudo apt-get install jq
