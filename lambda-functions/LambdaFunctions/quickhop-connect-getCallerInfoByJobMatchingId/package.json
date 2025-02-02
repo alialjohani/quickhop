@@ -1,5 +1,5 @@
 {
-  "name": "quickhop-lex-ai",
+  "name": "quickhop-connect-getcallerinfobyjobmatchingid",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -14,9 +14,11 @@
   "devDependencies": {
     "@types/aws-lambda": "^8.10.147"
   },
-  "projectName": "quickhop-lex-ai",
+  "projectName": "quickhop-connect-getCallerInfoByJobMatchingId",
   "dependencies": {
-    "dotenv": "^16.4.7",
-    "openai": "^4.80.0"
+    "@aws-sdk/client-dynamodb": "^3.738.0",
+    "@aws-sdk/lib-dynamodb": "^3.738.0",
+    "@types/node": "^22.13.0",
+    "dotenv": "^16.4.7"
   }
 }

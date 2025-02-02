@@ -10,6 +10,7 @@ cd ../$1
 echo $1
 npm init -y
 npm install -D @types/aws-lambda # Assure esbuild is installed: sudo apt install esbuild
+npm install @types/node
 npm pkg set projectName=$1
 npm pkg set scripts.build="../$FOLDER/deploy.sh" # set this for later use with: npm run build
 cp ../$FOLDER/index-template.ts.txt ./index.ts
