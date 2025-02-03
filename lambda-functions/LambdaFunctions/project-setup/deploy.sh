@@ -9,6 +9,7 @@ REGION="ca-central-1"
 
 
 # Build
+npm install
 echo ">> Build: $PROJECT_NAME"
 rm -rf dist
 esbuild index.ts --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=dist/index.js
