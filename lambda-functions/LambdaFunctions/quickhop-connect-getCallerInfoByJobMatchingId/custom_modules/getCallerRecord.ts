@@ -116,6 +116,7 @@ const getCallerRecord = async (
             response.body!.TTL = itemRes.body!.TTL as number;
             response.body!.PhoneNumber = itemRes.body!.PhoneNumber;
             response.body!.isActive = itemRes.body!.isActive;
+            response.body!.maxCandidates = itemRes.body!.maxCandidates;
 
             return response;
         } else {
