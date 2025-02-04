@@ -45,6 +45,7 @@ import { updateOpportunityResultsService } from '../services/DB/opportunityResul
 import dynamodbUpdateItems from '../services/AWS/dynamodbUpdateItems';
 import { aiCheckOpenEndQuestionService } from '../services/AI/aiCheckOpenEndQuestionService';
 
+const TABLE_INTERVIEWEES = process.env.DynamoDB_TABLE_INTERVIEWEES || '';
 
 interface UpdateRecruiterProfileType extends Omit<Recruiter, 'id' | 'email' | 'companyId'> { }
 
@@ -171,11 +172,11 @@ export const deactivateJobPostController = async (req: Request, res: Response, n
         // update DB: job post to be in complete status
         await deactivateJobPostService(recruiterId, jobPostId);
 
-        // update Dynamodb 'quickhop_Interviewees': to deactivate any incoming phone calls
+        // update Dynamodb: to deactivate any incoming phone calls
         // this table holds all candidate's info that are expected to call for the interview
         // these info are needed in the IVR call, and when the call is disconnected
         await dynamodbUpdateItems({
-            tableName: 'quickhop_Interviewees',
+            tableName: TABLE_INTERVIEWEES,
             partitionKeyName: 'OneTimeAccessKey', // this is the main partition key
             updateAttributeName: 'isActive', // update this field to be false
             updateAttributeValue: false,
