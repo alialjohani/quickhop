@@ -5,6 +5,7 @@ REGION="ca-central-1"
 MAIN_PROJECT_NAME="quickhop"
 FRONTEND_PROJECT_NAME="web-app-frontend"
 BACKEND_PROJECT_NAME="web-app-backend"
+LAMBDA_PROJECT_NAME="lambda-functions"
 EC2InstanceImageId=ami-0bee12a638c7a8942 ## imageId must be compatible with the Region
 S3_BUCKET_NAME="quickhop-stack-bucket" ## S3 bucket already created
 MAIN_STACK_NAME="quickhop-stack"
@@ -15,9 +16,11 @@ REPO_GIT="https://git-codecommit.ca-central-1.amazonaws.com/v1/repos/quickhop"
 FILE_SSMParameters_NAME="SSMParameters.yaml"
 FILE_RoleResources_NAME="RoleResources.yaml"
 FILE_SGResources_NAME="SGResources.yaml"
+FILE_DynamodbResources_NAME="DynamodbResources.yaml"
 FILE_DBResources_NAME="DBResources.yaml"
-FILE_FrontendAppEC2Instance_NAME="FrontendAppEC2Instance.yaml"
+FILE_LambdaResources_NAME="LambdaResources.yaml"
 FILE_BackendAppEC2Instance_NAME="BackendAppEC2Instance.yaml"
+FILE_FrontendAppEC2Instance_NAME="FrontendAppEC2Instance.yaml"
 FILE_TargetGroupResources_NAME="TargetGroupResources.yaml"
 FILE_LoadBalancerResources_NAME="LoadBalancerResources.yaml"
 FILE_MAIN_TEMPLATE="main.yaml"
@@ -51,6 +54,7 @@ $FILE_FrontendAppEC2Instance_NAME > $TEMP_FILE_FrontendAppEC2Instance_NAME
 sed -e "s|\${{REGION}}|$REGION|g" \
 -e "s|\${{MAIN_PROJECT_NAME}}|$MAIN_PROJECT_NAME|g" \
 -e "s|\${{BACKEND_PROJECT_NAME}}|$BACKEND_PROJECT_NAME|g" \
+-e "s|\${{LAMBDA_PROJECT_NAME}}|$LAMBDA_PROJECT_NAME|g" \
 -e "s|\${{EC2InstanceImageId}}|$EC2InstanceImageId|g" \
 -e "s|\${{REPO_GIT}}|$REPO_GIT|g" \
 $FILE_BackendAppEC2Instance_NAME > $TEMP_FILE_BackendAppEC2Instance_NAME
@@ -61,11 +65,13 @@ echo "Uploading templates to S3..."
 aws s3 cp $FILE_SSMParameters_NAME s3://$S3_BUCKET_NAME/ --region $REGION
 aws s3 cp $FILE_RoleResources_NAME s3://$S3_BUCKET_NAME/ --region $REGION
 aws s3 cp $FILE_SGResources_NAME s3://$S3_BUCKET_NAME/ --region $REGION
+aws s3 cp $FILE_DynamodbResources_NAME s3://$S3_BUCKET_NAME/ --region $REGION
 aws s3 cp $FILE_DBResources_NAME s3://$S3_BUCKET_NAME/ --region $REGION
+aws s3 cp $FILE_LambdaResources_NAME s3://$S3_BUCKET_NAME/ --region $REGION
+aws s3 cp $TEMP_FILE_BackendAppEC2Instance_NAME s3://$S3_BUCKET_NAME/ --region $REGION
+aws s3 cp $TEMP_FILE_FrontendAppEC2Instance_NAME s3://$S3_BUCKET_NAME/ --region $REGION
 aws s3 cp $FILE_TargetGroupResources_NAME s3://$S3_BUCKET_NAME/ --region $REGION
 aws s3 cp $FILE_LoadBalancerResources_NAME s3://$S3_BUCKET_NAME/ --region $REGION
-aws s3 cp $TEMP_FILE_FrontendAppEC2Instance_NAME s3://$S3_BUCKET_NAME/ --region $REGION
-aws s3 cp $TEMP_FILE_BackendAppEC2Instance_NAME s3://$S3_BUCKET_NAME/ --region $REGION
 aws s3 cp $TEMP_FILE_MAIN_TEMPLATE s3://$S3_BUCKET_NAME/ --region $REGION
 
 

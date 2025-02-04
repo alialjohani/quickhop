@@ -47,9 +47,13 @@ Resources:
       Value: !GetAtt QuickHopDB.Endpoint.Address
 
 Outputs:
-  DBSecretName:
-    Description: "Secret name created for RDS instance in Secrets Manager"
+  DBPasswordArn:
+    Description: "Secret password created for RDS instance in Secrets Manager"
     Value: !GetAtt QuickHopDB.MasterUserSecret.SecretArn
+    Export:
+      Name: DBPasswordArn
   DBHost:
     Description: "DB endpoint/DB Host"
     Value: !GetAtt QuickHopDB.Endpoint.Address
+    Export: 
+      Name: DBHost

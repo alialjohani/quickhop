@@ -1,0 +1,110 @@
+Parameters:
+  dbName:
+    Type: String
+    Description: To be passed from the parent template.
+
+  dbUser:
+    Type: String
+    Description: To be passed from the parent template.
+
+  dbPort:
+    Type: Number
+    Description: To be passed from the parent template.
+  
+  awsS3BucketName:
+    Type: String
+    Description: The bucket must already exist to upload/download files from.
+
+  awsS3RecordingPrefix:
+    Type: String
+    Description: AWS Connect auto saves recording to a bucket with a prefix, this is the prefix (the path where recording being saved).
+
+  openaiApiKey:
+    Type: String
+    Description: OpenAI key to access the model.
+  
+  dynamoDBTableInterviewees:
+    Type: String
+    Description: The table name to save interviewees information.
+
+  dynamoDBTableInitialMessage:
+    Type: String
+    Description: The table name that stores the initial prompt message for the AI.
+    
+  dynamoDBTableCounter:
+    Type: String
+    Description: The table name that is used as a counter for each job post.
+
+Resources:
+  LambdaFunctionQuickhopConnectEventDbUpdate:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: quickhop-connect-event-dbUpdate
+      Runtime: nodejs22.x
+      Handler: index.handler
+      Role: !ImportValue LambdaRoleQuickhopConnectEventDbUpdateArn
+      MemorySize: 3008
+      Timeout: 900
+      Environment:
+        Variables:
+          DB_HOST: !ImportValue DBHost
+          DB_NAME: !Ref dbName
+          DB_PORT: !Ref dbPort
+          DB_USER: !Ref dbUser
+          DB_PASSWORD_ARN: !ImportValue DBPasswordArn
+      Code:
+        ZipFile: |
+          export const handler = async (event) => {return { statusCode: 200 }; };
+
+  LambdaFunctionQuickhopConnectEventRecording:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: quickhop-connect-event-recording
+      Runtime: nodejs22.x
+      Handler: index.handler
+      Role: !ImportValue LambdaRoleQuickhopConnectEventRecordingArn
+      MemorySize: 3008
+      Timeout: 900
+      Environment:
+        Variables:
+          S3_BUCKET: !Ref awsS3BucketName
+          S3_RECORDING_BASE_PREFIX: !Ref awsS3RecordingPrefix
+      Code:
+        ZipFile: |
+          export const handler = async (event) => {return { statusCode: 200 }; };
+
+  LambdaFunctionQuickhopConnectGetCallerInfoByJobMatchingId:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: quickhop-connect-getCallerInfoByJobMatchingId
+      Runtime: nodejs22.x
+      Handler: index.handler
+      Role: !ImportValue LambdaRoleCommonArn
+      MemorySize: 2000
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref dynamoDBTableInterviewees 
+          CALLER_COUNTER_TABLE_NAME: !Ref dynamoDBTableCounter
+          CALLER_COUNTER_PRIMARY_FIELD: JobPostId # Should not changed frequently 
+          CALLER_COUNTER_COUNTER_FIELD: DidCallCounter # Should not changed frequently 
+      Code:
+        ZipFile: |
+          export const handler = async (event) => {return { statusCode: 200 }; };
+
+  LambdaFunctionQuickhopConnectLexAi:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: quickhop-connect-lex-ai
+      Runtime: nodejs22.x
+      Handler: index.handler
+      Role: !ImportValue LambdaRoleCommonArn
+      MemorySize: 2000
+      Environment:
+        Variables:
+          API_KEY: !Ref openaiApiKey
+          MODEL: gpt-4-turbo  # Can be changed later at any time
+          LEX_INTENT_NAME: FallbackIntent # Should not changed frequently 
+          TABLE_Initial_LLM_Message: !Ref dynamoDBTableInitialMessage
+      Code:
+        ZipFile: |
+          export const handler = async (event) => {return { statusCode: 200 }; };

@@ -1,6 +1,6 @@
 Resources:
   # Create a new IAM Role
-  QuickHopIAMRole:
+  QuickhopEC2BackendIAMRole:
     Type: "AWS::IAM::Role"
     Properties:
       AssumeRolePolicyDocument:
@@ -20,16 +20,107 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonCognitoPowerUser
         - arn:aws:iam::aws:policy/SecretsManagerReadWrite
         - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+        - arn:aws:iam::aws:policy/AWSLambda_FullAccess
+
+  QuickhopEC2FrontendIAMRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+      Path: "/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSCodeCommitPowerUser
+        - arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess
 
   # Create an Instance Profile and associate it with the IAM Role
-  QuickHopProfile:
+  QuickhopEC2BackendProfile:
     Type: "AWS::IAM::InstanceProfile"
     Properties:
       Path: "/"
       Roles:
-        - Ref: QuickHopIAMRole
+        - Ref: QuickhopEC2BackendIAMRole
+
+  QuickhopEC2FrontendIAMRole:
+    Type: "AWS::IAM::InstanceProfile"
+    Properties:
+      Path: "/"
+      Roles:
+        - Ref: QuickhopEC2FrontendIAMRole
+
+  LambdaRoleQuickhopConnectEventDbUpdate:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: LambdaRoleQuickhopConnectEventDbUpdate
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/SecretsManagerReadWrite
+
+  LambdaRoleQuickhopConnectEventRecording:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: LambdaRoleQuickhopConnectEventRecording
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/SecretsManagerReadWrite
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+
+  LambdaRoleCommon:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: LambdaRoleCommon
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+
 Outputs:
-  QuickHopProfile:
-    Value: !Ref QuickHopProfile
+  QuickhopEC2BackendProfile:
+    Value: !Ref QuickhopEC2BackendProfile
     Export:
-      Name: QuickHopProfile
+      Name: QuickhopEC2BackendProfile
+  QuickhopEC2FrontendIAMRole:
+    Value: !Ref QuickhopEC2FrontendIAMRole
+    Export:
+      Name: QuickhopEC2FrontendIAMRole
+  LambdaRoleQuickhopConnectEventDbUpdateArn:
+    Description: "IAM Role ARN for Lambda Execution (quickhop-connect-event-dbUpdate)"
+    Value: !GetAtt LambdaRoleQuickhopConnectEventDbUpdate.Arn
+    Export:
+      Name: LambdaRoleQuickhopConnectEventDbUpdateArn
+  LambdaRoleQuickhopConnectEventRecordingArn:
+    Description: "IAM Role ARN for Lambda Execution (quickhop-connect-event-recording)"
+    Value: !GetAtt LambdaRoleQuickhopConnectEventRecording.Arn
+    Export:
+      Name: LambdaRoleQuickhopConnectEventRecordingArn
+  LambdaRoleCommonArn:
+    Description: "IAM Role ARN for Lambda Execution (for both: quickhop-connect-lex-ai and quickhop-connect-getCallerInfoByJobMatchingId)"
+    Value: !GetAtt LambdaRoleCommon.Arn
+    Export:
+      Name: LambdaRoleCommonArn

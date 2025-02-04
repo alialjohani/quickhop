@@ -11,6 +11,10 @@ Parameters:
     Type: String
     Description: The bucket must already exist to upload/download files from.
 
+  awsS3RecordingPrefix:
+    Type: String
+    Description: AWS Connect auto saves recording to a bucket with a prefix, this is the prefix (the path where recording being saved).
+
   cognitoDomain:
     Type: String
     Description: Cognito domain.
@@ -122,12 +126,19 @@ Resources:
         dynamoDBTableInitialMessage: !Ref dynamoDBTableInitialMessage
         dynamoDBTableCounter: !Ref dynamoDBTableCounter
 
-
   RoleResources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/RoleResources.yaml"
-
+  
+  DynamodbResources:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/DynamodbResources.yaml"
+      Parameters:
+        dynamoDBTableInterviewees: !Ref dynamoDBTableInterviewees
+        dynamoDBTableInitialMessage: !Ref dynamoDBTableInitialMessage
+        dynamoDBTableCounter: !Ref dynamoDBTableCounter
 
   SGResources:
     Type: AWS::CloudFormation::Stack
@@ -136,10 +147,11 @@ Resources:
       Parameters:
         dbPort: !Ref dbPort
 
-
   DBResources:
     Type: AWS::CloudFormation::Stack
-    DependsOn: SGResources
+    DependsOn: 
+      - SGResources
+      - SSMParameters
     Properties:
       TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/DBResources.yaml"
       Parameters:
@@ -148,13 +160,31 @@ Resources:
         dbUser: !Ref dbUser
         dbPort: !Ref dbPort
 
+  LambdaResources:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: 
+      - RoleResources
+      - DBResources
+    Properties:
+      TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/LambdaResources.yaml"
+      Parameters:
+        dbName: !Ref dbName
+        dbUser: !Ref dbUser
+        dbPort: !Ref dbPort
+        awsS3BucketName: !Ref awsS3BucketName
+        awsS3RecordingPrefix: !Ref awsS3RecordingPrefix
+        openaiApiKey: !Ref openaiApiKey
+        dynamoDBTableInterviewees: !Ref dynamoDBTableInterviewees
+        dynamoDBTableInitialMessage: !Ref dynamoDBTableInitialMessage
+        dynamoDBTableCounter: !Ref dynamoDBTableCounter
 
   BackendAppEC2Instance:
     Type: AWS::CloudFormation::Stack
     DependsOn:
       - SSMParameters
-      - DBResources
       - RoleResources
+      - DBResources
+      - LambdaResources
     Properties:
       TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/${{TEMP_FILE_BackendAppEC2Instance_NAME}}"
 

@@ -5,7 +5,7 @@ Resources:
       InstanceType: t2.micro
       SecurityGroupIds:
         - !ImportValue BackendAppSecurityGroup
-      IamInstanceProfile: !ImportValue QuickHopProfile
+      IamInstanceProfile: !ImportValue QuickhopEC2BackendProfile
       KeyName: quickhop_key
       ImageId: ${{EC2InstanceImageId}}
       Tags:
@@ -14,7 +14,7 @@ Resources:
       UserData:
         Fn::Base64: |
           #!/bin/bash
-          ########## Objective 1: Config and run backend web app ##########
+          ########## Objective 1: Config and install packages ##########
           ## cat /var/log/cloud-init-output.log (to read the logs at the end, run this manually)
           set -e  # Exit on errors
           set -x  # Enable command logging
@@ -23,6 +23,7 @@ Resources:
           REGION=${{REGION}}
           MAIN_PROJECT_NAME=${{MAIN_PROJECT_NAME}}
           BACKEND_PROJECT_NAME=${{BACKEND_PROJECT_NAME}}
+          LAMBDA_PROJECT_NAME=${{LAMBDA_PROJECT_NAME}}
           REPO_CODECOMMIT=${{REPO_GIT}}
           apt-get update -y
           apt-get upgrade -y
@@ -43,8 +44,13 @@ Resources:
           git config --global credential.UseHttpPath true
           git clone $REPO_CODECOMMIT
           echo ">>> Source code cloned."
+          ########## Objective 2: Deploy Lambda(s) ##########
+          cd $MAIN_PROJECT_NAME/$LAMBDA_PROJECT_NAME
+          ./deploy-all-lambda.sh
+          echo ">>> Lambda(s) Deployment: completed."
+          ########## Objective 3: Build Web App Backend ##########
           # Build, install packages, move it a specific directory
-          cd $MAIN_PROJECT_NAME/$BACKEND_PROJECT_NAME
+          cd ../$BACKEND_PROJECT_NAME
           npm install
           npm install sequelize # to prevent compiler errors, assure installing the package
           npm run build -y
@@ -100,7 +106,7 @@ Resources:
           pm2 save
           # Completed
           echo ">>> Server is ready."
-          ########## Objective 2: Create simple ready script to add a company and recruiter in DB ##########
+          ########## Objective 4: Create a script to add a company/recruiter in DB ##########
           cat <<EOF > Create_Company_Recruiter.sh
           #!/bin/bash
           sudo apt-get install jq

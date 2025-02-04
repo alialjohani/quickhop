@@ -5,7 +5,7 @@ Resources:
       InstanceType: t2.micro
       SecurityGroupIds:
         - !ImportValue FrontendAppSecurityGroup
-      IamInstanceProfile: !ImportValue QuickHopProfile
+      IamInstanceProfile: !ImportValue QuickhopEC2FrontendIAMRole
       KeyName: quickhop_key
       ImageId: ${{EC2InstanceImageId}}
       Tags:

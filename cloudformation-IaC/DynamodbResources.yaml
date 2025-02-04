@@ -1,0 +1,58 @@
+Parameters:  
+  dynamoDBTableInterviewees:
+    Type: String
+    Description: The table name to save interviewees information.
+
+  dynamoDBTableInitialMessage:
+    Type: String
+    Description: The table name that stores the initial prompt message for the AI.
+    
+  dynamoDBTableCounter:
+    Type: String
+    Description: The table name that is used as a counter for each job post.
+
+Resources:
+  QuickhopIntervieweesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref dynamoDBTableInterviewees
+      AttributeDefinitions:
+        - AttributeName: OneTimeAccessKey
+          AttributeType: S
+      KeySchema:
+        - AttributeName: OneTimeAccessKey
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: TTL
+        Enabled: true
+  
+  QuickhopInitialPromptTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref dynamoDBTableInitialMessage
+      AttributeDefinitions:
+        - AttributeName: JobPostId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: JobPostId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: TTL
+        Enabled: true
+  
+  QuickhopCounterTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref dynamoDBTableCounter
+      AttributeDefinitions:
+        - AttributeName: JobPostId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: JobPostId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: TTL
+        Enabled: true

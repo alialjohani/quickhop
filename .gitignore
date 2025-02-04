@@ -8,6 +8,7 @@
 **/coverage/
 **/tmp/
 **/src/logs
+**/package-lock.json
 
 # Environment-specific files
 web-app-backend/.production.env

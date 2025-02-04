@@ -8,6 +8,10 @@
         "ParameterValue": ""
     },
     {
+        "ParameterKey": "awsS3RecordingPrefix",
+        "ParameterValue": ""
+    },
+    {
         "ParameterKey": "cognitoDomain",
         "ParameterValue": ""
     },
@@ -29,15 +33,15 @@
     },
     {
         "ParameterKey": "openaiModel",
-        "ParameterValue": ""
+        "ParameterValue": "gpt-4o"
     },
     {
         "ParameterKey": "backendBaseUrl",
-        "ParameterValue": ""
+        "ParameterValue": "https://backend.online/api"
     },
     {
         "ParameterKey": "allowedOrigin",
-        "ParameterValue": ""
+        "ParameterValue": "https://quickhop.online"
     },
     {
         "ParameterKey": "adminEmailId",
@@ -45,7 +49,7 @@
     },
     {
         "ParameterKey": "dbIdentifier",
-        "ParameterValue": "quickhopDBIdentifier"
+        "ParameterValue": ""
     },
     {
         "ParameterKey": "dbName",
@@ -61,30 +65,30 @@
     },
     {
         "ParameterKey": "VPC",
-        "ParameterValue": "vpc-01d23333333333333"
+        "ParameterValue": "vpc-01d28c678d2747f48"
     },
     {
         "ParameterKey": "Subnet1",
-        "ParameterValue": "subnet-06788222222222221"
+        "ParameterValue": "subnet-0e4356d7c5686b476"
     },
     {
         "ParameterKey": "Subnet2",
-        "ParameterValue": "subnet-06788222222222222"
+        "ParameterValue": "subnet-06788d2c4c37de260"
     },
     {
         "ParameterKey": "recruitmentPhone",
         "ParameterValue": "+16047777777"
     },
     {
-        "ParameterKey": "DynamoDBTableInterviewees",
+        "ParameterKey": "dynamoDBTableInterviewees",
         "ParameterValue": "quickhop_Interviewees"
     },
     {
-        "ParameterKey": "DynamoDBTableInitialMessage",
+        "ParameterKey": "dynamoDBTableInitialMessage",
         "ParameterValue": "quickhop_Initial_Message"
     },
     {
-        "ParameterKey": "DynamoDBTableCounter",
+        "ParameterKey": "dynamoDBTableCounter",
         "ParameterValue": "quickhop_CallerDidCallCounter"
     }
 ]
