@@ -22,8 +22,6 @@ dotenv.config();
 // All required env variables for this Lambda function:
 // process.env.MODEL
 // process.env.API_KEY,
-// process.env.ORGANIZATION,
-// process.env.PROJECT,
 const INTENT_NAME = process.env.LEX_INTENT_NAME;
 const TABLE_Initial_LLM_Message = process.env.TABLE_Initial_LLM_Message as string;
 

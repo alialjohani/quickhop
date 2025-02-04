@@ -15,8 +15,6 @@ const MODEL: string = process.env.MODEL ?? '';
 
 const openai = new OpenAI({
     apiKey: process.env.API_KEY,
-    organization: process.env.ORGANIZATION,
-    project: process.env.PROJECT,
 });
 
 const CHECKING_SPECIL_CHARS_RANGE = 20;
