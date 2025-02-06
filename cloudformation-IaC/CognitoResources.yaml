@@ -1,0 +1,60 @@
+Parameters:
+  cognitoUserPoolDomain:
+    Type: String
+    Description: A unique name that would be used by Cognito for the user pool domain configuration.
+  
+  cognitoRedirectUri:
+    Type: String
+    Description: Cognito redirect uri, that must end with /callback. This uri must be already configured in Cognito.
+
+Resources:
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: QuickHopUserPool
+
+  CognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: QuickHopAppClient
+      UserPoolId: !Ref CognitoUserPool
+      AllowedOAuthFlows:
+        - code  # Authorization Code Grant
+      AllowedOAuthScopes:
+        - aws.cognito.signin.user.admin
+        - openid
+        - email
+        - profile
+        - phone
+      AllowedOAuthFlowsUserPoolClient: true
+      CallbackURLs:
+        - !Ref cognitoRedirectUri
+      LogoutURLs:
+        - !Ref cognitoRedirectUri
+      SupportedIdentityProviders:
+        - COGNITO
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+
+  CognitoUserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      UserPoolId: !Ref CognitoUserPool
+      Domain: !Ref cognitoUserPoolDomain
+
+Outputs:
+  UserPoolId:
+    Description: "The ID of the Cognito User Pool"
+    Value: !Ref CognitoUserPool
+  CognitoClientId:
+    Description: "The ID of the Cognito User Pool Client"
+    Value: !Ref CognitoUserPoolClient
+    Export:
+      Name: cognitoClientId
+  CognitoDomain:
+    Description: "Cognito Hosted UI Domain"
+    Value: !Sub "https://${cognitoUserPoolDomain}.auth.${AWS::Region}.amazoncognito.com"
+    Export:
+      Name: cognitoDomain

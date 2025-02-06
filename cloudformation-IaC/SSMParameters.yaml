@@ -7,14 +7,7 @@ Parameters:
     Type: String
     Description: The bucket must already exist to upload/download files from.
 
-  cognitoDomain:
-    Type: String
-    Description: Cognito domain.
-
-  cognitoClientId:
-    Type: String
-    Description: The Client ID.
-
+  # Other cognito params are imported after being exported from CognitoResources.yaml
   cognitoRedirectUri:
     Type: String
     Description: Cognito redirect uri, that must end with /callback. This uri must be already configured in Cognito.
@@ -92,14 +85,14 @@ Resources:
     Properties:
       Name: "/quickhop/cognitoDomain"
       Type: String
-      Value: !Ref cognitoDomain
+      Value: !ImportValue cognitoDomain
 
   cognitoClientIdSSMParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Name: "/quickhop/cognitoClientId"
       Type: String
-      Value: !Ref cognitoClientId
+      Value: !ImportValue cognitoClientId
 
   cognitoRedirectUriSSMParameter:
     Type: AWS::SSM::Parameter

@@ -47,7 +47,7 @@ Resources:
       Roles:
         - Ref: QuickhopEC2BackendIAMRole
 
-  QuickhopEC2FrontendIAMRole:
+  QuickhopEC2FrontendProfile:
     Type: "AWS::IAM::InstanceProfile"
     Properties:
       Path: "/"
@@ -105,10 +105,10 @@ Outputs:
     Value: !Ref QuickhopEC2BackendProfile
     Export:
       Name: QuickhopEC2BackendProfile
-  QuickhopEC2FrontendIAMRole:
-    Value: !Ref QuickhopEC2FrontendIAMRole
+  QuickhopEC2FrontendProfile:
+    Value: !Ref QuickhopEC2FrontendProfile
     Export:
-      Name: QuickhopEC2FrontendIAMRole
+      Name: QuickhopEC2FrontendProfile
   LambdaRoleQuickhopConnectEventDbUpdateArn:
     Description: "IAM Role ARN for Lambda Execution (quickhop-connect-event-dbUpdate)"
     Value: !GetAtt LambdaRoleQuickhopConnectEventDbUpdate.Arn

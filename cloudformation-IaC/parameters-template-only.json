@@ -1,27 +1,23 @@
 [
     {
         "ParameterKey": "awsRegion",
-        "ParameterValue": ""
+        "ParameterValue": "ca-central-1"
     },
     {
         "ParameterKey": "awsS3BucketName",
-        "ParameterValue": ""
+        "ParameterValue": "quickhop"
     },
     {
         "ParameterKey": "awsS3RecordingPrefix",
-        "ParameterValue": ""
+        "ParameterValue": "connect/testingenv/CallRecordings/ivr/"
     },
     {
-        "ParameterKey": "cognitoDomain",
-        "ParameterValue": ""
-    },
-    {
-        "ParameterKey": "cognitoClientId",
-        "ParameterValue": ""
+        "ParameterKey": "cognitoUserPoolDomain",
+        "ParameterValue": "quickhop"
     },
     {
         "ParameterKey": "cognitoRedirectUri",
-        "ParameterValue": ""
+        "ParameterValue": "https://quickhop.infotechlab.online/callback"
     },
     {
         "ParameterKey": "googleClientId",
@@ -37,27 +33,27 @@
     },
     {
         "ParameterKey": "backendBaseUrl",
-        "ParameterValue": "https://backend.online/api"
+        "ParameterValue": "https://backend.infotechlab.online/api"
     },
     {
         "ParameterKey": "allowedOrigin",
-        "ParameterValue": "https://quickhop.online"
+        "ParameterValue": "https://quickhop.infotechlab.online"
     },
     {
         "ParameterKey": "adminEmailId",
-        "ParameterValue": ""
+        "ParameterValue": "admin@admin.com"
     },
     {
         "ParameterKey": "dbIdentifier",
-        "ParameterValue": ""
+        "ParameterValue": "quickhopDBIdentifier"
     },
     {
         "ParameterKey": "dbName",
-        "ParameterValue": ""
+        "ParameterValue": "quickhopDB"
     },
     {
         "ParameterKey": "dbUser",
-        "ParameterValue": ""
+        "ParameterValue": "quickhopuser"
     },
     {
         "ParameterKey": "SSLCertificateArn",
@@ -77,7 +73,7 @@
     },
     {
         "ParameterKey": "recruitmentPhone",
-        "ParameterValue": "+16047777777"
+        "ParameterValue": "+16047777799"
     },
     {
         "ParameterKey": "dynamoDBTableInterviewees",

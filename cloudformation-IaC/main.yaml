@@ -15,13 +15,9 @@ Parameters:
     Type: String
     Description: AWS Connect auto saves recording to a bucket with a prefix, this is the prefix (the path where recording being saved).
 
-  cognitoDomain:
+  cognitoUserPoolDomain:
     Type: String
-    Description: Cognito domain.
-
-  cognitoClientId:
-    Type: String
-    Description: The Client ID.
+    Description: A unique name that would be used by Cognito for the user pool domain configuration.
 
   cognitoRedirectUri:
     Type: String
@@ -102,15 +98,23 @@ Parameters:
     Description: The table name that is used as a counter for each job post.
 
 Resources:
+  CognitoResources:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/CognitoResources.yaml"
+      Parameters:
+        cognitoUserPoolDomain: !Ref cognitoUserPoolDomain
+        cognitoRedirectUri: !Ref cognitoRedirectUri        
+
   SSMParameters:
     Type: AWS::CloudFormation::Stack
+    DependsOn:
+      - CognitoResources
     Properties:
       TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/SSMParameters.yaml"
       Parameters:
         awsRegion: !Ref awsRegion
         awsS3BucketName: !Ref awsS3BucketName
-        cognitoDomain: !Ref cognitoDomain
-        cognitoClientId: !Ref cognitoClientId
         cognitoRedirectUri: !Ref cognitoRedirectUri
         googleClientId: !Ref googleClientId
         openaiApiKey: !Ref openaiApiKey
@@ -184,7 +188,7 @@ Resources:
       - SSMParameters
       - RoleResources
       - DBResources
-      - LambdaResources
+      - LambdaResources # the lambda code is deployed from this EC2
     Properties:
       TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/${{TEMP_FILE_BackendAppEC2Instance_NAME}}"
 

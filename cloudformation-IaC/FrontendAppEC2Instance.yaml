@@ -5,7 +5,7 @@ Resources:
       InstanceType: t2.micro
       SecurityGroupIds:
         - !ImportValue FrontendAppSecurityGroup
-      IamInstanceProfile: !ImportValue QuickhopEC2FrontendIAMRole
+      IamInstanceProfile: !ImportValue QuickhopEC2FrontendProfile
       KeyName: quickhop_key
       ImageId: ${{EC2InstanceImageId}}
       Tags:
@@ -73,7 +73,7 @@ Resources:
           # Start building
           npm install
           npm run build -y
-          mkdir ~/$FRONTEND_PROJECT_NAME
+          ## mkdir ~/$FRONTEND_PROJECT_NAME
           mv ./dist/* /var/www/html/
           cd ../..
           rm -r ./$MAIN_PROJECT_NAME

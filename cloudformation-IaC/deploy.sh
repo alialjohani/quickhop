@@ -14,6 +14,7 @@ REPO_GIT="https://git-codecommit.ca-central-1.amazonaws.com/v1/repos/quickhop"
 
 # Main files' names (to be manually added)
 FILE_SSMParameters_NAME="SSMParameters.yaml"
+FILE_CognitoResources_NAME="CognitoResources.yaml"
 FILE_RoleResources_NAME="RoleResources.yaml"
 FILE_SGResources_NAME="SGResources.yaml"
 FILE_DynamodbResources_NAME="DynamodbResources.yaml"
@@ -62,6 +63,7 @@ $FILE_BackendAppEC2Instance_NAME > $TEMP_FILE_BackendAppEC2Instance_NAME
 
 # Upload templates to S3
 echo "Uploading templates to S3..."
+aws s3 cp $FILE_CognitoResources_NAME s3://$S3_BUCKET_NAME/ --region $REGION
 aws s3 cp $FILE_SSMParameters_NAME s3://$S3_BUCKET_NAME/ --region $REGION
 aws s3 cp $FILE_RoleResources_NAME s3://$S3_BUCKET_NAME/ --region $REGION
 aws s3 cp $FILE_SGResources_NAME s3://$S3_BUCKET_NAME/ --region $REGION

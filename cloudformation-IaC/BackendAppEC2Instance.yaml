@@ -36,8 +36,11 @@ Resources:
           [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
           # download and install Node.js (you may need to restart the terminal)
           nvm install 22
-          echo ">>> NVM, NPM, Node.js: installed."          
+          echo ">>> NVM, NPM, Node.js: installed."
+          apt install esbuild -y
+          apt install zip -y          
           apt-get install postgresql-client -y
+          echo ">>> esbuild, zip, postgresql-client: installed."
           # git source code
           cd /tmp          
           git config --global credential.helper '!aws codecommit credential-helper $@'
