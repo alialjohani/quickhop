@@ -1,4 +1,8 @@
 Parameters:
+  awsRegion:
+    Type: String
+    Description: Region to create the resources on.
+
   cognitoUserPoolDomain:
     Type: String
     Description: A unique name that would be used by Cognito for the user pool domain configuration.
@@ -55,6 +59,6 @@ Outputs:
       Name: cognitoClientId
   CognitoDomain:
     Description: "Cognito Hosted UI Domain"
-    Value: !Sub "https://${cognitoUserPoolDomain}.auth.${AWS::Region}.amazoncognito.com"
+    Value: !Sub "https://${cognitoUserPoolDomain}.auth.${awsRegion}.amazoncognito.com"
     Export:
       Name: cognitoDomain

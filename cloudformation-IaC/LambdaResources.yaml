@@ -1,4 +1,8 @@
 Parameters:
+  awsRegion:
+    Type: String
+    Description: Region to create the resources on.
+
   dbName:
     Type: String
     Description: To be passed from the parent template.
@@ -108,3 +112,37 @@ Resources:
       Code:
         ZipFile: |
           export const handler = async (event) => {return { statusCode: 200 }; };
+
+  QuickhopConnectLexAiPolicy:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref LambdaFunctionQuickhopConnectLexAi
+      Principal: lexv2.amazonaws.com
+      SourceAccount: !Sub "${AWS::AccountId}"
+      SourceArn: !Sub "arn:aws:lex:${awsRegion}:${AWS::AccountId}:bot-alias/*/*"
+
+Outputs:
+  QuickhopConnectEventDbUpdateARN:
+    Description: "The Lambda's ARN for quickhop-connect-event-dbUpdate"
+    Value: !GetAtt LambdaFunctionQuickhopConnectEventDbUpdate.Arn
+    Export:
+      Name: LambdaQuickhopConnectEventDbUpdateARN
+
+  QuickhopConnectEventRecordingARN:
+    Description: "The Lambda's ARN for quickhop-connect-event-recording"
+    Value: !GetAtt LambdaFunctionQuickhopConnectEventRecording.Arn
+    Export:
+      Name: LambdaQuickhopConnectEventRecordingARN
+
+  QuickhopConnectGetCallerInfoByJobMatchingIdARN:
+    Description: "The Lambda's ARN for tquickhop-connect-getCallerInfoByJobMatchingId"
+    Value: !GetAtt LambdaFunctionQuickhopConnectGetCallerInfoByJobMatchingId.Arn
+    Export:
+      Name: LambdaQuickhopConnectGetCallerInfoByJobMatchingIdARN
+
+  QuickhopConnectLexAiARN:
+    Description: "The Lambda's ARN for quickhop-connect-lex-ai"
+    Value: !GetAtt LambdaFunctionQuickhopConnectLexAi.Arn
+    Export:
+      Name: LambdaQuickhopConnectLexAiARN

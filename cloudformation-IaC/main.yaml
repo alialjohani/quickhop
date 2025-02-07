@@ -103,6 +103,7 @@ Resources:
     Properties:
       TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/CognitoResources.yaml"
       Parameters:
+        awsRegion: !Ref awsRegion
         cognitoUserPoolDomain: !Ref cognitoUserPoolDomain
         cognitoRedirectUri: !Ref cognitoRedirectUri        
 
@@ -172,6 +173,7 @@ Resources:
     Properties:
       TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/LambdaResources.yaml"
       Parameters:
+        awsRegion: !Ref awsRegion
         dbName: !Ref dbName
         dbUser: !Ref dbUser
         dbPort: !Ref dbPort
