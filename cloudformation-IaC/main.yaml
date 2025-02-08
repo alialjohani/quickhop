@@ -80,6 +80,10 @@ Parameters:
   Subnet2:
     Type: "AWS::EC2::Subnet::Id"
     Description: "Public subnet. The other subnet must be in a different Availability Zone."
+
+  awsKeyPair:
+    Type: "AWS::EC2::Subnet::Id"
+    Description: "The name of the predefined (existing) key pair to access EC2 servers."
   
   recruitmentPhone:
     Type: String
@@ -184,6 +188,30 @@ Resources:
         dynamoDBTableInitialMessage: !Ref dynamoDBTableInitialMessage
         dynamoDBTableCounter: !Ref dynamoDBTableCounter
 
+  LexResources:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+      - RoleResources
+      - LambdaResources
+    Properties:
+      TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/LexResources.yaml"
+
+  StepFunctionResources:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+      - RoleResources
+      - LambdaResources
+    Properties:
+      TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/StepFunctionResources.yaml"
+
+  EventBridgeRuleResources:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+      - RoleResources
+      - StepFunctionResources
+    Properties:
+      TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/EventBridgeRuleResources.yaml"
+
   BackendAppEC2Instance:
     Type: AWS::CloudFormation::Stack
     DependsOn:
@@ -193,6 +221,8 @@ Resources:
       - LambdaResources # the lambda code is deployed from this EC2
     Properties:
       TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/${{TEMP_FILE_BackendAppEC2Instance_NAME}}"
+      Parameters:
+        awsKeyPair: !Ref awsKeyPair
 
 
   FrontendAppEC2Instance:
@@ -202,6 +232,8 @@ Resources:
       - RoleResources
     Properties:
       TemplateURL: !Sub "https://${{S3BucketName}}.s3.${{REGION}}.amazonaws.com/${{TEMP_FILE_FrontendAppEC2Instance_NAME}}"
+      Parameters:
+        awsKeyPair: !Ref awsKeyPair
 
 
   TargetGroupResources:

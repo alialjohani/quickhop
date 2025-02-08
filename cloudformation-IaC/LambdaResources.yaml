@@ -123,25 +123,25 @@ Resources:
       SourceArn: !Sub "arn:aws:lex:${awsRegion}:${AWS::AccountId}:bot-alias/*/*"
 
 Outputs:
-  QuickhopConnectEventDbUpdateARN:
+  LambdaQuickhopConnectEventDbUpdateARN:
     Description: "The Lambda's ARN for quickhop-connect-event-dbUpdate"
     Value: !GetAtt LambdaFunctionQuickhopConnectEventDbUpdate.Arn
     Export:
       Name: LambdaQuickhopConnectEventDbUpdateARN
 
-  QuickhopConnectEventRecordingARN:
+  LambdaQuickhopConnectEventRecordingARN:
     Description: "The Lambda's ARN for quickhop-connect-event-recording"
     Value: !GetAtt LambdaFunctionQuickhopConnectEventRecording.Arn
     Export:
       Name: LambdaQuickhopConnectEventRecordingARN
 
-  QuickhopConnectGetCallerInfoByJobMatchingIdARN:
+  LambdaQuickhopConnectGetCallerInfoByJobMatchingIdARN:
     Description: "The Lambda's ARN for tquickhop-connect-getCallerInfoByJobMatchingId"
     Value: !GetAtt LambdaFunctionQuickhopConnectGetCallerInfoByJobMatchingId.Arn
     Export:
       Name: LambdaQuickhopConnectGetCallerInfoByJobMatchingIdARN
 
-  QuickhopConnectLexAiARN:
+  LambdaQuickhopConnectLexAiARN:
     Description: "The Lambda's ARN for quickhop-connect-lex-ai"
     Value: !GetAtt LambdaFunctionQuickhopConnectLexAi.Arn
     Export:

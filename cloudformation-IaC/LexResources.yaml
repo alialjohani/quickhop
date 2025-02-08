@@ -1,0 +1,60 @@
+Resources:
+  QuickHopLexV2Bot:
+    Type: AWS::Lex::Bot
+    Properties:
+      Name: QuickHopBot
+      RoleArn: !ImportValue LexRoleArn.Arn
+      DataPrivacy:
+        ChildDirected: false
+      IdleSessionTTLInSeconds: 300
+      BotLocales:
+        - LocaleId: en_US
+          Description: "English Language"
+          NluConfidenceThreshold: 0.4
+          SlotTypes: []
+          Intents:
+            # Fallback Intent with Initialization & Fulfillment Lambda Hook
+            - Name: FallbackIntent
+              Description: "Default Fallback Intent"
+              ParentIntentSignature: "AMAZON.FallbackIntent"
+              DialogCodeHook:
+                Enabled: true
+              FulfillmentCodeHook:
+                Enabled: true
+            # Dummy Intent (Required by Lex)
+            - Name: DummyIntent
+              Description: "This is a dummy intent to satisfy Lex's requirements."
+              SampleUtterances:
+                - Utterance: "......"
+              FulfillmentCodeHook:
+                Enabled: false
+
+  # Lex Bot Version
+  QuickHopLexV2BotVersion:
+    Type: AWS::Lex::BotVersion
+    Properties:
+      BotId: !Ref QuickHopLexV2Bot
+      BotVersionLocaleSpecification:
+        - LocaleId: en_US
+          BotVersionLocaleDetails:
+            SourceBotVersion: "DRAFT"
+      Description: "Version 1 of QuickHopBot"
+
+  # Lex Bot Alias
+  QuickHopLexV2BotAlias:
+    Type: AWS::Lex::BotAlias
+    Properties:
+      BotAliasName: QuickHopLiveAlias
+      BotId: !Ref QuickHopLexV2Bot
+      BotVersion: !GetAtt QuickHopLexV2BotVersion.BotVersion
+      SentimentAnalysisSettings:
+        DetectSentiment: false
+      Description: "Alias for QuickHop Lex V2 bot"
+      BotAliasLocaleSettings:
+        - LocaleId: en_US
+          BotAliasLocaleSetting:
+            Enabled: true
+            CodeHookSpecification:
+              LambdaCodeHook:
+                LambdaArn: !ImportValue LambdaQuickhopConnectLexAiARN
+                CodeHookInterfaceVersion: "1.0"

@@ -99,6 +99,53 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
         - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+  
+  # IAM Role for Lex Bot
+  LexRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lex.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AmazonLexFullAccess
+  
+  StepFunctionExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: QuickHopStepFunctionRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 
+                - states.amazonaws.com
+            Action: 
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaRole
+        - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
+
+  EventBridgeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: EventBridgeInvokeStepFunctionsRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: "events.amazonaws.com"
+            Action: "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSStepFunctionsFullAccess
 
 Outputs:
   QuickhopEC2BackendProfile:
@@ -124,3 +171,18 @@ Outputs:
     Value: !GetAtt LambdaRoleCommon.Arn
     Export:
       Name: LambdaRoleCommonArn
+  LexRoleArn:
+    Description: "IAM Role ARN for Lex Bot"
+    Value: !GetAtt LexRole.Arn
+    Export:
+      Name: LexRoleArn
+  StepFunctionRoleArn:
+    Description: "ARN of the IAM Role for Step Function Execution"
+    Value: !GetAtt StepFunctionExecutionRole.Arn
+    Export:
+      Name: StepFunctionRoleArn
+  EventBridgeRoleArn:
+    Description: "ARN of the IAM Role used by EventBridge"
+    Value: !GetAtt EventBridgeRole.Arn
+    Export:
+      Name: EventBridgeRoleArn

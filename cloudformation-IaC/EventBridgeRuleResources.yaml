@@ -1,0 +1,21 @@
+Resources:
+  EventBridgeRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: QuickHopConnectEventRule
+      Description: "Triggers a Step Function when a call is disconnected in Amazon Connect"
+      EventPattern:
+        source:
+          - "aws.connect"
+        detail:
+          channel:
+            - "VOICE"
+          initiationMethod:
+            - "INBOUND"
+          eventType:
+            - "DISCONNECTED"
+      State: ENABLED
+      Targets:
+        - Id: StepFunctionTarget
+          Arn: !ImportValue StepFunctionArn
+          RoleArn: !ImportValue EventBridgeRoleArn

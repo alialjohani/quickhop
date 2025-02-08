@@ -20,6 +20,9 @@ FILE_SGResources_NAME="SGResources.yaml"
 FILE_DynamodbResources_NAME="DynamodbResources.yaml"
 FILE_DBResources_NAME="DBResources.yaml"
 FILE_LambdaResources_NAME="LambdaResources.yaml"
+FILE_LexResources_NAME="LexResources.yaml"
+FILE_StepFunctionResources_NAME="StepFunctionResources.yaml"
+FILE_EventBridgeRuleResources_NAME="EventBridgeRuleResources.yaml"
 FILE_BackendAppEC2Instance_NAME="BackendAppEC2Instance.yaml"
 FILE_FrontendAppEC2Instance_NAME="FrontendAppEC2Instance.yaml"
 FILE_TargetGroupResources_NAME="TargetGroupResources.yaml"
@@ -70,6 +73,9 @@ aws s3 cp $FILE_SGResources_NAME s3://$S3_BUCKET_NAME/ --region $REGION
 aws s3 cp $FILE_DynamodbResources_NAME s3://$S3_BUCKET_NAME/ --region $REGION
 aws s3 cp $FILE_DBResources_NAME s3://$S3_BUCKET_NAME/ --region $REGION
 aws s3 cp $FILE_LambdaResources_NAME s3://$S3_BUCKET_NAME/ --region $REGION
+aws s3 cp $FILE_LexResources_NAME s3://$S3_BUCKET_NAME/ --region $REGION
+aws s3 cp $FILE_StepFunctionResources_NAME s3://$S3_BUCKET_NAME/ --region $REGION
+aws s3 cp $FILE_EventBridgeRuleResources_NAME s3://$S3_BUCKET_NAME/ --region $REGION
 aws s3 cp $TEMP_FILE_BackendAppEC2Instance_NAME s3://$S3_BUCKET_NAME/ --region $REGION
 aws s3 cp $TEMP_FILE_FrontendAppEC2Instance_NAME s3://$S3_BUCKET_NAME/ --region $REGION
 aws s3 cp $FILE_TargetGroupResources_NAME s3://$S3_BUCKET_NAME/ --region $REGION

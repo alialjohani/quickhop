@@ -1,0 +1,96 @@
+Resources:
+  QuickHopStateMachine:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      StateMachineName: QuickHopStateMachine
+      StateMachineType: STANDARD
+      RoleArn: !ImportValue StepFunctionRoleArn
+      TracingConfiguration:
+        Enabled: true
+      DefinitionString: 
+        Fn::Sub: |
+          {
+            "QueryLanguage": "JSONata",
+            "Comment": "State Machine with retry logic for Lambda function",
+            "StartAt": "Wait",
+            "States": {
+              "Wait": {
+                "Type": "Wait",
+                "Seconds": 60,
+                "Next": "Pass"
+              },
+              "Pass": {
+                "Type": "Pass",
+                "Next": "quickhop-connect-event-recording",
+                "Assign": {
+                  "connectEvent": "{% $states.input %}"
+                }
+              },
+              "quickhop-connect-event-recording": {
+                "Type": "Task",
+                "Resource": "arn:aws:states:::lambda:invoke",
+                "Arguments": {
+                  "FunctionName": "${LambdaFunction1Arn}",
+                  "Payload": "{% $connectEvent %}"
+                },
+                "Retry": [
+                  {
+                    "ErrorEquals": [
+                      "Lambda.ServiceException",
+                      "Lambda.AWSLambdaException",
+                      "Lambda.SdkClientException",
+                      "Lambda.TooManyRequestsException"
+                    ],
+                    "IntervalSeconds": 180,
+                    "MaxAttempts": 5,
+                    "BackoffRate": 2,
+                    "JitterStrategy": "NONE",
+                    "MaxDelaySeconds": 60
+                  }
+                ],
+                "Assign": {
+                  "recordingKey": "{% $states.result.Payload.recordingKey %}"
+                },
+                "Next": "quickhop-connect-event-dbUpdate"
+              },
+              "quickhop-connect-event-dbUpdate": {
+                "Type": "Task",
+                "Resource": "arn:aws:states:::lambda:invoke",
+                "Output": "{% $states.result.Payload %}",
+                "Arguments": {
+                  "FunctionName": "${LambdaFunction2Arn}",
+                  "Payload": {
+                    "recordingKey": "{% $recordingKey %}",
+                    "datetime": "{% $connectEvent.time %}",
+                    "OpportunityResultId": "{% $connectEvent.detail.tags.OpportunityResultId %}"
+                  }
+                },
+                "Retry": [
+                  {
+                    "ErrorEquals": [
+                      "Lambda.ServiceException",
+                      "Lambda.AWSLambdaException",
+                      "Lambda.SdkClientException",
+                      "Lambda.TooManyRequestsException"
+                    ],
+                    "IntervalSeconds": 1,
+                    "MaxAttempts": 3,
+                    "BackoffRate": 2,
+                    "JitterStrategy": "FULL"
+                  }
+                ],
+                "End": true
+              }
+            }
+          }
+        Variables:
+          LambdaFunction1Arn: !ImportValue LambdaQuickhopConnectEventRecordingARN
+          LambdaFunction2Arn: !ImportValue LambdaQuickhopConnectEventDbUpdateARN
+
+
+Outputs:
+  StepFunctionArn:
+    Description: "ARN of the Step Function"
+    Value: !GetAtt QuickHopStateMachine.Arn
+    Export:
+      Name: StepFunctionArn
