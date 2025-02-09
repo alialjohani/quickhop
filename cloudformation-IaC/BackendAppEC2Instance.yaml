@@ -1,6 +1,24 @@
 Parameters:
+  awsRegion:
+    Type: String
+    Description: Region to create the resources on.
+  ec2InstanceImageId:
+    Type: String
+    Description: "The image ID of the EC2 instance (Note: each region has different image ID)."
+  mainProjectFolderName:
+    Type: String
+    Description: "The name of the main folder that has the project ('quickhop')"
+  backendProjectFolderName:
+    Type: String
+    Description: "The name of the main folder for the backend code ('web-app-backend')"
+  lambdaProjectFolderName:
+    Type: String
+    Description: "The name of the main folder for the lambda code ('lambda-functions')"
+  repoGit:
+    Type: String
+    Description: "The https URL for the remote Git repo."
   awsKeyPair:
-    Type: "AWS::EC2::Subnet::Id"
+    Type: String
     Description: "The name of the predefined (existing) key pair to access EC2 servers."
 
 Resources:
@@ -12,12 +30,12 @@ Resources:
         - !ImportValue BackendAppSecurityGroup
       IamInstanceProfile: !ImportValue QuickhopEC2BackendProfile
       KeyName: !Ref awsKeyPair
-      ImageId: ${{EC2InstanceImageId}}
+      ImageId: !Ref ec2InstanceImageId
       Tags:
         - Key: Name
           Value: BackendAppEC2Instance
       UserData:
-        Fn::Base64: |
+        Fn::Base64: !Sub |
           #!/bin/bash
           ########## Objective 1: Config and install packages ##########
           ## cat /var/log/cloud-init-output.log (to read the logs at the end, run this manually)
@@ -25,11 +43,11 @@ Resources:
           set -x  # Enable command logging
           export HOME=/root
           echo ">>> Started the script"
-          REGION=${{REGION}}
-          MAIN_PROJECT_NAME=${{MAIN_PROJECT_NAME}}
-          BACKEND_PROJECT_NAME=${{BACKEND_PROJECT_NAME}}
-          LAMBDA_PROJECT_NAME=${{LAMBDA_PROJECT_NAME}}
-          REPO_CODECOMMIT=${{REPO_GIT}}
+          REGION="${awsRegion}"
+          MAIN_PROJECT_NAME="${mainProjectFolderName}"
+          BACKEND_PROJECT_NAME="${backendProjectFolderName}"
+          LAMBDA_PROJECT_NAME="${lambdaProjectFolderName}"
+          REPO_CODECOMMIT="${repoGit}"
           apt-get update -y
           apt-get upgrade -y
           snap install aws-cli --classic
@@ -37,7 +55,7 @@ Resources:
           sleep 30
           # installs nvm (Node Version Manager), NPM, node
           curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
-          export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+          export NVM_DIR="$([ -z "${!XDG_CONFIG_HOME-}" ] && printf %s "${!HOME}/.nvm" || printf %s "${!XDG_CONFIG_HOME}/nvm")"
           [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
           # download and install Node.js (you may need to restart the terminal)
           nvm install 22

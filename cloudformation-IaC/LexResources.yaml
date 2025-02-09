@@ -3,7 +3,7 @@ Resources:
     Type: AWS::Lex::Bot
     Properties:
       Name: QuickHopBot
-      RoleArn: !ImportValue LexRoleArn.Arn
+      RoleArn: !ImportValue LexRoleArn
       DataPrivacy:
         ChildDirected: false
       IdleSessionTTLInSeconds: 300

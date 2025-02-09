@@ -1,6 +1,21 @@
 Parameters:
+  awsRegion:
+    Type: String
+    Description: Region to create the resources on.
+  ec2InstanceImageId:
+    Type: String
+    Description: "The image ID of the EC2 instance (Note: each region has different image ID)."
+  mainProjectFolderName:
+    Type: String
+    Description: "The name of the main folder that has the project ('quickhop')"
+  frontendProjectFolderName:
+    Type: String
+    Description: "The name of the main folder for the frontend code ('web-app-frontend')"
+  repoGit:
+    Type: String
+    Description: "The https URL for the remote Git repo."
   awsKeyPair:
-    Type: "AWS::EC2::Subnet::Id"
+    Type: String
     Description: "The name of the predefined (existing) key pair to access EC2 servers."
 
 Resources:
@@ -12,12 +27,12 @@ Resources:
         - !ImportValue FrontendAppSecurityGroup
       IamInstanceProfile: !ImportValue QuickhopEC2FrontendProfile
       KeyName: !Ref awsKeyPair
-      ImageId: ${{EC2InstanceImageId}}
+      ImageId: !Ref ec2InstanceImageId
       Tags:
         - Key: Name
           Value: FrontendAppEC2Instance
       UserData:
-        Fn::Base64: |
+        Fn::Base64: !Sub |
           #!/bin/bash
           ## cat /var/log/cloud-init-output.log (to read the logs at the end, run this manually)
           set -e  # Exit on errors
@@ -25,10 +40,10 @@ Resources:
           export HOME=/root
           echo ">>> Started the script"
           sleep 30
-          MAIN_PROJECT_NAME=${{MAIN_PROJECT_NAME}}
-          FRONTEND_PROJECT_NAME=${{FRONTEND_PROJECT_NAME}}
-          REGION=${{REGION}}
-          REPO_CODECOMMIT=${{REPO_GIT}}
+          REGION="${awsRegion}"
+          MAIN_PROJECT_NAME="${mainProjectFolderName}"
+          FRONTEND_PROJECT_NAME="${frontendProjectFolderName}"
+          REPO_CODECOMMIT="${repoGit}"
           SSM_APP_NAME=quickhop
           apt-get update -y
           apt-get upgrade -y
