@@ -1,0 +1,212 @@
+{
+  "Version": "2019-10-30",
+  "StartAction": "Set recording and analytics behavior",
+  "Metadata": {
+    "entryPointPosition": {
+      "x": -651.2,
+      "y": 156
+    },
+    "ActionMetadata": {
+      "68abbaf3-c1cc-4843-96a3-664bfdf79ae0": {
+        "position": {
+          "x": 236,
+          "y": 563.2
+        }
+      },
+      "753589d3-6c35-4196-9f77-9f30c1c21df8": {
+        "position": {
+          "x": -8,
+          "y": 116.8
+        }
+      },
+      "GeneralBackendError": {
+        "position": {
+          "x": -19.2,
+          "y": 489.6
+        },
+        "isFriendlyName": true
+      },
+      "Lex_With_LLM": {
+        "position": {
+          "x": -272.8,
+          "y": 228
+        },
+        "isFriendlyName": true,
+        "parameters": {
+          "LexV2Bot": {
+            "AliasArn": {
+              "displayName": "QuickHopLiveAlias",
+              "useLexBotDropdown": true,
+              "lexV2BotName": "QuickHopBot"
+            }
+          },
+          "LexSessionAttributes": {
+            "Name": {
+              "useDynamic": true
+            },
+            "JobPostId": {
+              "useDynamic": true
+            }
+          }
+        },
+        "dynamicMetadata": {
+          "Name": true,
+          "JobPostId": true,
+          "x-amz-lex:audio:max-length-ms:*:*": false,
+          "x-amz-lex:max-speech-duration-ms:*:*": false
+        },
+        "useLexBotDropdown": true,
+        "lexV2BotName": "QuickHopBot",
+        "lexV2BotAliasName": "QuickHopLiveAlias",
+        "conditionMetadata": [
+          {
+            "id": "3ce3dec3-7231-4620-830c-178b4ba70315",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "FallbackIntent"
+          }
+        ]
+      },
+      "Set recording and analytics behavior": {
+        "position": {
+          "x": -527.2,
+          "y": 156
+        },
+        "isFriendlyName": true
+      }
+    },
+    "Annotations": [],
+    "name": "quickhop-module-Lex-Lambda-OpenAI",
+    "description": "",
+    "status": "published",
+    "hash": {}
+  },
+  "Actions": [
+    {
+      "Parameters": {},
+      "Identifier": "68abbaf3-c1cc-4843-96a3-664bfdf79ae0",
+      "Type": "DisconnectParticipant",
+      "Transitions": {}
+    },
+    {
+      "Parameters": {},
+      "Identifier": "753589d3-6c35-4196-9f77-9f30c1c21df8",
+      "Type": "EndFlowModuleExecution",
+      "Transitions": {}
+    },
+    {
+      "Parameters": {
+        "Text": "Sorry, we experience some issues at the moment. Please, try again later. Thank you"
+      },
+      "Identifier": "GeneralBackendError",
+      "Type": "MessageParticipant",
+      "Transitions": {
+        "NextAction": "68abbaf3-c1cc-4843-96a3-664bfdf79ae0",
+        "Errors": [
+          {
+            "NextAction": "68abbaf3-c1cc-4843-96a3-664bfdf79ae0",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "SSML": "Hello $.Attributes.Name ,\nPlease, waite.",
+        "LexV2Bot": {
+          "AliasArn": "arn:aws:lex:ca-central-1:058264198202:bot-alias/RNU9S8UF0W/WSLP6K4NU9"
+        },
+        "LexSessionAttributes": {
+          "Name": "$.Attributes.Name",
+          "JobPostId": "$.Attributes.JobPostId",
+          "x-amz-lex:audio:max-length-ms:*:*": "15000",
+          "x-amz-lex:max-speech-duration-ms:*:*": "30000"
+        }
+      },
+      "Identifier": "Lex_With_LLM",
+      "Type": "ConnectParticipantWithLexBot",
+      "Transitions": {
+        "NextAction": "GeneralBackendError",
+        "Conditions": [
+          {
+            "NextAction": "753589d3-6c35-4196-9f77-9f30c1c21df8",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "FallbackIntent"
+              ]
+            }
+          }
+        ],
+        "Errors": [
+          {
+            "NextAction": "753589d3-6c35-4196-9f77-9f30c1c21df8",
+            "ErrorType": "NoMatchingCondition"
+          },
+          {
+            "NextAction": "GeneralBackendError",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "RecordingBehavior": {
+          "RecordedParticipants": [
+            "Agent",
+            "Customer"
+          ],
+          "IVRRecordingBehavior": "Enabled"
+        },
+        "AnalyticsBehavior": {
+          "Enabled": "True",
+          "AnalyticsLanguage": "en-US",
+          "AnalyticsRedactionBehavior": "Disabled",
+          "AnalyticsRedactionResults": "RedactedAndOriginal",
+          "ChannelConfiguration": {
+            "Chat": {
+              "AnalyticsModes": [
+                "ContactLens"
+              ]
+            },
+            "Voice": {
+              "AnalyticsModes": [
+                "PostContact"
+              ]
+            }
+          },
+          "SummaryConfiguration": {
+            "SummaryModes": [
+              "PostContact"
+            ]
+          }
+        }
+      },
+      "Identifier": "Set recording and analytics behavior",
+      "Type": "UpdateContactRecordingBehavior",
+      "Transitions": {
+        "NextAction": "Lex_With_LLM"
+      }
+    }
+  ],
+  "Settings": {
+    "InputParameters": [],
+    "OutputParameters": [],
+    "Transitions": [
+      {
+        "DisplayName": "Success",
+        "ReferenceName": "Success",
+        "Description": ""
+      },
+      {
+        "DisplayName": "Error",
+        "ReferenceName": "Error",
+        "Description": ""
+      }
+    ]
+  }
+}

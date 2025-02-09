@@ -1,0 +1,175 @@
+{
+  "Version": "2019-10-30",
+  "StartAction": "a91f61c0-6fd6-4d12-936e-75e37efe3235",
+  "Metadata": {
+    "entryPointPosition": {
+      "x": -338.4,
+      "y": 80
+    },
+    "ActionMetadata": {
+      "a91f61c0-6fd6-4d12-936e-75e37efe3235": {
+        "position": {
+          "x": -187.2,
+          "y": 80
+        }
+      },
+      "WelcomePrompt": {
+        "position": {
+          "x": 70.4,
+          "y": 150.4
+        },
+        "isFriendlyName": true
+      },
+      "GetAndCheckCallerInfoForJobPosting": {
+        "position": {
+          "x": 330.4,
+          "y": -47.2
+        },
+        "isFriendlyName": true,
+        "parameters": {
+          "FlowModuleId": {
+            "displayName": "quickhop-GetAndCheckCaller"
+          }
+        },
+        "contactFlowModuleName": "quickhop-GetAndCheckCaller"
+      },
+      "OpenAI": {
+        "position": {
+          "x": 661.6,
+          "y": -146.4
+        },
+        "isFriendlyName": true,
+        "parameters": {
+          "FlowModuleId": {
+            "displayName": "quickhop-module-Lex-Lambda-OpenAI"
+          }
+        },
+        "contactFlowModuleName": "quickhop-module-Lex-Lambda-OpenAI"
+      },
+      "GeneralBackendError": {
+        "position": {
+          "x": 1417.6,
+          "y": 389.6
+        },
+        "isFriendlyName": true
+      },
+      "GoodbyePrompt": {
+        "position": {
+          "x": 969.6,
+          "y": -182.4
+        },
+        "isFriendlyName": true
+      },
+      "0cf014a4-3516-4bb1-9f99-63fe5851bbb1": {
+        "position": {
+          "x": 1826.4,
+          "y": -112
+        }
+      }
+    },
+    "Annotations": [],
+    "name": "quickhop-main",
+    "description": "",
+    "type": "contactFlow",
+    "status": "published",
+    "hash": {}
+  },
+  "Actions": [
+    {
+      "Parameters": {
+        "FlowLoggingBehavior": "Enabled"
+      },
+      "Identifier": "a91f61c0-6fd6-4d12-936e-75e37efe3235",
+      "Type": "UpdateFlowLoggingBehavior",
+      "Transitions": {
+        "NextAction": "WelcomePrompt"
+      }
+    },
+    {
+      "Parameters": {
+        "Text": "Welcome to interview contact center. "
+      },
+      "Identifier": "WelcomePrompt",
+      "Type": "MessageParticipant",
+      "Transitions": {
+        "NextAction": "GetAndCheckCallerInfoForJobPosting",
+        "Errors": [
+          {
+            "NextAction": "GeneralBackendError",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "FlowModuleId": "0da96d26-cfee-42a6-9936-3d26618d0389"
+      },
+      "Identifier": "GetAndCheckCallerInfoForJobPosting",
+      "Type": "InvokeFlowModule",
+      "Transitions": {
+        "NextAction": "OpenAI",
+        "Errors": [
+          {
+            "NextAction": "GeneralBackendError",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "FlowModuleId": "8d7149ff-e9f0-497a-9db8-1aed8ada0ce0"
+      },
+      "Identifier": "OpenAI",
+      "Type": "InvokeFlowModule",
+      "Transitions": {
+        "NextAction": "GoodbyePrompt",
+        "Errors": [
+          {
+            "NextAction": "GeneralBackendError",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "Text": "Sorry, we experience some issues at the moment. Please, try again later. Thank you"
+      },
+      "Identifier": "GeneralBackendError",
+      "Type": "MessageParticipant",
+      "Transitions": {
+        "NextAction": "0cf014a4-3516-4bb1-9f99-63fe5851bbb1",
+        "Errors": [
+          {
+            "NextAction": "0cf014a4-3516-4bb1-9f99-63fe5851bbb1",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "Text": "Goodbye"
+      },
+      "Identifier": "GoodbyePrompt",
+      "Type": "MessageParticipant",
+      "Transitions": {
+        "NextAction": "0cf014a4-3516-4bb1-9f99-63fe5851bbb1",
+        "Errors": [
+          {
+            "NextAction": "GeneralBackendError",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {},
+      "Identifier": "0cf014a4-3516-4bb1-9f99-63fe5851bbb1",
+      "Type": "DisconnectParticipant",
+      "Transitions": {}
+    }
+  ]
+}
