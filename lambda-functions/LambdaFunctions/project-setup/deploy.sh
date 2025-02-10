@@ -4,8 +4,9 @@
 
 # Variables
 PROJECT_NAME=$(node -p "require('./package.json').projectName")
-S3BUCKET="quickhop-stack-bucket" # Bucket created only to upload zip to Lambda functions
-REGION="ca-central-1"
+PARAM_JSON_PATH="../../../cloudformation-IaC/parameters.json"
+REGION=$(grep -A 1 '"ParameterKey": "awsRegion"' $PARAM_JSON_PATH | grep '"ParameterValue"' | sed -E 's/.*"ParameterValue": *"([^"]*)".*/\1/')
+S3BUCKET=$(grep -A 1 '"ParameterKey": "awsS3BucketName"' $PARAM_JSON_PATH | grep '"ParameterValue"' | sed -E 's/.*"ParameterValue": *"([^"]*)".*/\1/')
 
 
 # Build

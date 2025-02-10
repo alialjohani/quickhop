@@ -398,7 +398,7 @@
     },
     {
       "Parameters": {
-        "LambdaFunctionARN": "arn:aws:lambda:ca-central-1:058264198202:function:quickhop-connect-getCallerInfoByJobMatchingId",
+        "LambdaFunctionARN": "",
         "InvocationTimeLimitSeconds": "8",
         "LambdaInvocationAttributes": {
           "OneTimeAccessKey": "$.StoredCustomerInput"

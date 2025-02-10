@@ -117,7 +117,7 @@
       "Parameters": {
         "SSML": "Hello $.Attributes.Name ,\nPlease, waite.",
         "LexV2Bot": {
-          "AliasArn": "arn:aws:lex:ca-central-1:058264198202:bot-alias/RNU9S8UF0W/WSLP6K4NU9"
+          "AliasArn": ""
         },
         "LexSessionAttributes": {
           "Name": "$.Attributes.Name",
