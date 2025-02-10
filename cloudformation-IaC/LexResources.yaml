@@ -58,3 +58,10 @@ Resources:
               LambdaCodeHook:
                 LambdaArn: !ImportValue LambdaQuickhopConnectLexAiARN
                 CodeHookInterfaceVersion: "1.0"
+
+Outputs:
+  QuickHopLexV2BotAliasArn:
+    Description: "ARN of the QuickHop Lex V2 Bot Alias"
+    Value: !GetAtt QuickHopLexV2BotAlias.Arn
+    Export:
+      Name: QuickHopLexV2BotAliasArn

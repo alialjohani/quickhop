@@ -12,6 +12,46 @@
         "ParameterValue": "connect/testingenv/CallRecordings/ivr/"
     },
     {
+        "ParameterKey": "awsKeyPair",
+        "ParameterValue": "quickhop_key"
+    },
+    {
+        "ParameterKey": "connectInstanceId",
+        "ParameterValue": "12345678-1234-1234-abcd-123456789abc"
+    },
+    {
+        "ParameterKey": "ec2InstanceImageId",
+        "ParameterValue": "ami-0bee12a638c7a8942"
+    },
+    {
+        "ParameterKey": "VPC",
+        "ParameterValue": "vpc-123456789abcndkfo"
+    },
+    {
+        "ParameterKey": "Subnet1",
+        "ParameterValue": "subnet-123456789abcndkfo"
+    },
+    {
+        "ParameterKey": "Subnet2",
+        "ParameterValue": "subnet-123456789abcndkfo"
+    },
+    {
+        "ParameterKey": "repoGit",
+        "ParameterValue": "https://git"
+    },
+    {
+        "ParameterKey": "SSLCertificateArn",
+        "ParameterValue": "arn:aws:acm:ca-central-1:123456789:certificate/12345678-1234-1234-abcd-123456789abc"
+    },
+    {
+        "ParameterKey": "backendBaseUrl",
+        "ParameterValue": "https://backend.infotechlab.online/api"
+    },
+    {
+        "ParameterKey": "allowedOrigin",
+        "ParameterValue": "https://quickhop.infotechlab.online"
+    },
+    {
         "ParameterKey": "cognitoUserPoolDomain",
         "ParameterValue": "quickhop"
     },
@@ -32,59 +72,19 @@
         "ParameterValue": "gpt-4o"
     },
     {
-        "ParameterKey": "backendBaseUrl",
-        "ParameterValue": "https://backend.infotechlab.online/api"
-    },
-    {
-        "ParameterKey": "allowedOrigin",
-        "ParameterValue": "https://quickhop.infotechlab.online"
-    },
-    {
-        "ParameterKey": "adminEmailId",
-        "ParameterValue": "admin@admin.com"
-    },
-    {
         "ParameterKey": "dbIdentifier",
-        "ParameterValue": "quickhopDBIdentifier"
-    },
-    {
-        "ParameterKey": "dbName",
-        "ParameterValue": "quickhopDB"
-    },
-    {
-        "ParameterKey": "dbUser",
-        "ParameterValue": "quickhopuser"
-    },
-    {
-        "ParameterKey": "SSLCertificateArn",
         "ParameterValue": ""
     },
     {
-        "ParameterKey": "VPC",
-        "ParameterValue": "vpc-01d28c678d2747f48"
+        "ParameterKey": "dbName",
+        "ParameterValue": ""
     },
     {
-        "ParameterKey": "Subnet1",
-        "ParameterValue": "subnet-0e4356d7c5686b476"
-    },
-    {
-        "ParameterKey": "Subnet2",
-        "ParameterValue": "subnet-06788d2c4c37de260"
+        "ParameterKey": "dbUser",
+        "ParameterValue": ""
     },
     {
         "ParameterKey": "recruitmentPhone",
         "ParameterValue": "+16047777799"
-    },
-    {
-        "ParameterKey": "dynamoDBTableInterviewees",
-        "ParameterValue": "quickhop_Interviewees"
-    },
-    {
-        "ParameterKey": "dynamoDBTableInitialMessage",
-        "ParameterValue": "quickhop_Initial_Message"
-    },
-    {
-        "ParameterKey": "dynamoDBTableCounter",
-        "ParameterValue": "quickhop_CallerDidCallCounter"
     }
 ]

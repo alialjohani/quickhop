@@ -11,6 +11,9 @@ Parameters:
   awsKeyPair:
     Type: String
     Description: "The name of the predefined (existing) key pair to access EC2 servers."
+  connectInstanceId:
+    Type: String
+    Description: "Amazon Connect Instance ID."
   VPC:
     Type: "AWS::EC2::VPC::Id"
     Description: The default VPC ID.
@@ -39,6 +42,10 @@ Parameters:
     Type: String
     Description: "The name of the main folder for the lambda code ('lambda-functions')"
     Default: "lambda-functions"
+  amazonConnectFolderName:
+    Type: String
+    Description: "The name of the main folder for the amazon connect ('amazon-connect')"
+    Default: "amazon-connect"
   repoGit:
     Type: String
     Description: "The https URL for the remote Git repo."
@@ -69,10 +76,10 @@ Parameters:
   adminEmailId:
     Type: String
     Description: Any email to be used as an admin email to access backend.
+    Default: admin@admin.com
   dbIdentifier:
     Type: String
     Description: The db name on the aws console.
-    Default: quickhopdb
   dbName:
     Type: String
     Description: The actual db name.
@@ -217,16 +224,20 @@ Resources:
       - RoleResources
       - DBResources
       - LambdaResources # the lambda code is deployed from this EC2
+      - LexResources
     Properties:
       TemplateURL: !Sub "https://${awsS3BucketName}.s3.${awsRegion}.amazonaws.com/BackendAppEC2Instance.yaml"
       Parameters:
         awsRegion: !Ref awsRegion
+        awsS3BucketName: !Ref awsS3BucketName
         ec2InstanceImageId: !Ref ec2InstanceImageId
         mainProjectFolderName: !Ref mainProjectFolderName
         backendProjectFolderName: !Ref backendProjectFolderName
         lambdaProjectFolderName: !Ref lambdaProjectFolderName
+        amazonConnectFolderName: !Ref amazonConnectFolderName
         repoGit: !Ref repoGit
         awsKeyPair: !Ref awsKeyPair
+        connectInstanceId: !Ref connectInstanceId
 
 
   FrontendAppEC2Instance:

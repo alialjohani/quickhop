@@ -21,6 +21,8 @@ Resources:
         - arn:aws:iam::aws:policy/SecretsManagerReadWrite
         - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
         - arn:aws:iam::aws:policy/AWSLambda_FullAccess
+        - arn:aws:iam::aws:policy/AmazonConnect_FullAccess
+        - arn:aws:iam::aws:policy/AmazonLexFullAccess
 
   QuickhopEC2FrontendIAMRole:
     Type: "AWS::IAM::Role"
