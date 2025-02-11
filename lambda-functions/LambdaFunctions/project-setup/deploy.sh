@@ -4,9 +4,11 @@
 
 # Variables
 PROJECT_NAME=$(node -p "require('./package.json').projectName")
-PARAM_JSON_PATH="../../../cloudformation-IaC/parameters.json"
-REGION=$(grep -A 1 '"ParameterKey": "awsRegion"' $PARAM_JSON_PATH | grep '"ParameterValue"' | sed -E 's/.*"ParameterValue": *"([^"]*)".*/\1/')
-S3BUCKET=$(grep -A 1 '"ParameterKey": "awsS3BucketName"' $PARAM_JSON_PATH | grep '"ParameterValue"' | sed -E 's/.*"ParameterValue": *"([^"]*)".*/\1/')
+
+# These env variables already exist and defined, in case running this script manually then uncomments
+# PARAM_JSON_PATH="../../../cloudformation-IaC/parameters.json"
+# REGION=$(grep -A 1 '"ParameterKey": "awsRegion"' $PARAM_JSON_PATH | grep '"ParameterValue"' | sed -E 's/.*"ParameterValue": *"([^"]*)".*/\1/')
+# S3BUCKET=$(grep -A 1 '"ParameterKey": "awsS3BucketName"' $PARAM_JSON_PATH | grep '"ParameterValue"' | sed -E 's/.*"ParameterValue": *"([^"]*)".*/\1/')
 
 
 # Build
