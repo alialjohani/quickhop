@@ -83,7 +83,7 @@ const ResultCard = ({ resultDetails }: { resultDetails: PostResultType }) => {
     { "Matching Score: ": resultDetails.MatchingScore.toString() },
     {
       "Interview Date: ": isCallMade
-        ? resultDetails.InterviewDate
+        ? resultDetails.InterviewDate?.split("T")[0]
         : "No Interview Call",
     },
     {

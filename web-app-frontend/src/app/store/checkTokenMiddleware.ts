@@ -8,12 +8,14 @@ interface JWTPayload {
   exp: number; // Expiration time in seconds since the Unix epoch
 }
 
+let isLoggingOut = false;
+
 const checkTokenMiddleware: Middleware<object> =
   (store) => (next) => (action) => {
     const state = store.getState();
     const token = state.auth.token;
 
-    if (token) {
+    if (token && !isLoggingOut) {
       // Decode the token and check expiration
       const decoded = jwtDecode<JWTPayload>(token);
       const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
@@ -21,6 +23,7 @@ const checkTokenMiddleware: Middleware<object> =
       // console.log(">>> decoded.exp= ", decoded.exp);
       if (decoded.exp < currentTime) {
         // Token is expired; log out the user
+        isLoggingOut = true;
         store.dispatch(logout());
       }
     }
