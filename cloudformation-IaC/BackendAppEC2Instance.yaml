@@ -61,6 +61,8 @@ Resources:
             export CONNECT_PROJECT_NAME="${amazonConnectFolderName}"
             export REPO_CODECOMMIT="${repoGit}"
             export CONNECT_ID="${connectInstanceId}"
+            export LEX_ARN="${LexAliasArn}"
+            export LAMBDA_CALLER_INFO_ARN="${LambdaCallerInfoARN}"
             apt-get update -y
             apt-get upgrade -y
             snap install aws-cli --classic
@@ -92,11 +94,11 @@ Resources:
             # Associate Lex
             aws connect associate-bot   \
             --instance-id $CONNECT_ID   \
-            --lex-v2-bot "AliasArn=$LexAliasArn"
+            --lex-v2-bot "AliasArn=$LEX_ARN"
             # Associate Lambda
             aws connect associate-lambda-function \
             --instance-id $CONNECT_ID \
-            --function-arn "$LambdaCallerInfoARN"
+            --function-arn "$LAMBDA_CALLER_INFO_ARN"
             # Upload the IVR flows if not already exist
             flowName="quickhop-main"
             flows=$(aws connect list-contact-flows --instance-id $CONNECT_ID --query "ContactFlowSummaryList[?Name=='$flowName'].Id" --output text)
