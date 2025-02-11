@@ -11,9 +11,6 @@ Parameters:
   awsKeyPair:
     Type: String
     Description: "The name of the predefined (existing) key pair to access EC2 servers."
-  connectInstanceId:
-    Type: String
-    Description: "Amazon Connect Instance ID."
   VPC:
     Type: "AWS::EC2::VPC::Id"
     Description: The default VPC ID.
@@ -42,10 +39,6 @@ Parameters:
     Type: String
     Description: "The name of the main folder for the lambda code ('lambda-functions')"
     Default: "lambda-functions"
-  amazonConnectFolderName:
-    Type: String
-    Description: "The name of the main folder for the amazon connect ('amazon-connect')"
-    Default: "amazon-connect"
   repoGit:
     Type: String
     Description: "The https URL for the remote Git repo."
@@ -234,11 +227,8 @@ Resources:
         mainProjectFolderName: !Ref mainProjectFolderName
         backendProjectFolderName: !Ref backendProjectFolderName
         lambdaProjectFolderName: !Ref lambdaProjectFolderName
-        amazonConnectFolderName: !Ref amazonConnectFolderName
         repoGit: !Ref repoGit
         awsKeyPair: !Ref awsKeyPair
-        connectInstanceId: !Ref connectInstanceId
-
 
   FrontendAppEC2Instance:
     Type: AWS::CloudFormation::Stack

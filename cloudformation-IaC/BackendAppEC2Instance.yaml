@@ -17,18 +17,12 @@ Parameters:
   lambdaProjectFolderName:
     Type: String
     Description: "The name of the main folder for the lambda code ('lambda-functions')"
-  amazonConnectFolderName:
-    Type: String
-    Description: "The name of the main folder for the amazon connect ('amazon-connect')"
   repoGit:
     Type: String
     Description: "The https URL for the remote Git repo."
   awsKeyPair:
     Type: String
     Description: "The name of the predefined (existing) key pair to access EC2 servers."
-  connectInstanceId:
-    Type: String
-    Description: "Amazon Connect Instance ID."
 
 Resources:
   BackendAppEC2Instance:
@@ -58,9 +52,7 @@ Resources:
             export MAIN_PROJECT_NAME="${mainProjectFolderName}"
             export BACKEND_PROJECT_NAME="${backendProjectFolderName}"
             export LAMBDA_PROJECT_NAME="${lambdaProjectFolderName}"
-            export CONNECT_PROJECT_NAME="${amazonConnectFolderName}"
             export REPO_CODECOMMIT="${repoGit}"
-            export CONNECT_ID="${connectInstanceId}"
             export LEX_ARN="${LexAliasArn}"
             export LAMBDA_CALLER_INFO_ARN="${LambdaCallerInfoARN}"
             apt-get update -y
@@ -88,44 +80,8 @@ Resources:
             ########## Objective 2: Deploy Lambda(s) ##########
             cd $MAIN_PROJECT_NAME/$LAMBDA_PROJECT_NAME
             ./deploy-all-lambda.sh
-            echo ">>> Lambda(s) Deployment: completed."
-            ########## Objective 3: Set up Amazon Connect: Lex, Lambda, and IVR Flows ##########
-            cd ../$CONNECT_PROJECT_NAME
-            # Associate Lex
-            aws connect associate-bot   \
-            --instance-id $CONNECT_ID   \
-            --lex-v2-bot "AliasArn=$LEX_ARN"
-            # Associate Lambda
-            aws connect associate-lambda-function \
-            --instance-id $CONNECT_ID \
-            --function-arn "$LAMBDA_CALLER_INFO_ARN"
-            # Upload the IVR flows if not already exist
-            flowName="quickhop-main"
-            flows=$(aws connect list-contact-flows --instance-id $CONNECT_ID --query "ContactFlowSummaryList[?Name=='$flowName'].Id" --output text)
-            if [ -z "$flows" ]; then
-              echo "Contact flows do not exist. Creating all flows."
-              
-              # Create the contact flow if it doesn't exist
-              aws connect create-contact-flow \
-              --instance-id $CONNECT_ID \
-              --name "quickhop-main" \
-              --type "CONTACT_FLOW" \
-              --content file://flows/quickhop-main.json
-
-              aws connect create-contact-flow-module \
-              --instance-id $CONNECT_ID \
-              --name "quickhop-GetAndCheckCaller" \
-              --content file://modules/quickhop-GetAndCheckCaller.json
-              
-              aws connect create-contact-flow-module \
-              --instance-id $CONNECT_ID \
-              --name "quickhop-module-Lex-Lambda-OpenAI" \
-              --content file://modules/quickhop-module-Lex-Lambda-OpenAI.json
-              echo "Contact flows were created."
-            else
-              echo "Contact flows already exists. Skipping creation."
-            fi
-            ########## Objective 4: Build Web App Backend ##########
+            echo ">>> Lambda(s) Deployment: completed."            
+            ########## Objective 3: Build Web App Backend ##########
             # Build, install packages, move it a specific directory
             cd ../$BACKEND_PROJECT_NAME
             npm install
@@ -183,7 +139,7 @@ Resources:
             pm2 save
             # Completed
             echo ">>> Server is ready."
-            ########## Objective 5: Create a script to add a company/recruiter in DB ##########
+            ########## Objective 4: Create a script to add a company/recruiter in DB ##########
             cat <<EOF > Create_Company_Recruiter.sh
             #!/bin/bash
             sudo apt-get install jq
@@ -224,7 +180,6 @@ Resources:
             mainProjectFolderName: !Ref mainProjectFolderName
             backendProjectFolderName: !Ref backendProjectFolderName
             lambdaProjectFolderName: !Ref lambdaProjectFolderName
-            amazonConnectFolderName: !Ref amazonConnectFolderName
             repoGit: !Ref repoGit
             LexAliasArn: !ImportValue QuickHopLexV2BotAliasArn
             LambdaCallerInfoARN: !ImportValue LambdaQuickhopConnectGetCallerInfoByJobMatchingIdARN

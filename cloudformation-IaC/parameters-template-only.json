@@ -16,10 +16,6 @@
         "ParameterValue": "quickhop_key"
     },
     {
-        "ParameterKey": "connectInstanceId",
-        "ParameterValue": "12345678-1234-1234-abcd-123456789abc"
-    },
-    {
         "ParameterKey": "ec2InstanceImageId",
         "ParameterValue": "ami-0bee12a638c7a8942"
     },
