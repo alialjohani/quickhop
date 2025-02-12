@@ -32,10 +32,6 @@
         "ParameterValue": "subnet-123456789abcndkfo"
     },
     {
-        "ParameterKey": "repoGit",
-        "ParameterValue": "https://git"
-    },
-    {
         "ParameterKey": "SSLCertificateArn",
         "ParameterValue": "arn:aws:acm:ca-central-1:123456789:certificate/12345678-1234-1234-abcd-123456789abc"
     },

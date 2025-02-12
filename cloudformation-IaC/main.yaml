@@ -41,7 +41,8 @@ Parameters:
     Default: "lambda-functions"
   repoGit:
     Type: String
-    Description: "The https URL for the remote Git repo."
+    Description: "The https URL for the Quickhop Git repo."
+    Default: "https://github.com/alialjohani/quickhop.git"
   SSLCertificateArn:
     Type: String
     Description: SSL certification that should be configured in AWS ACM, and its ARN value should be passed.
