@@ -26,10 +26,17 @@
         },
         "isFriendlyName": true
       },
+      "Set recording and analytics behavior": {
+        "position": {
+          "x": -527.2,
+          "y": 156
+        },
+        "isFriendlyName": true
+      },
       "Lex_With_LLM": {
         "position": {
-          "x": -272.8,
-          "y": 228
+          "x": -273.6,
+          "y": 227.2
         },
         "isFriendlyName": true,
         "parameters": {
@@ -41,26 +48,26 @@
             }
           },
           "LexSessionAttributes": {
-            "Name": {
+            "JobPostId": {
               "useDynamic": true
             },
-            "JobPostId": {
+            "Name": {
               "useDynamic": true
             }
           }
         },
         "dynamicMetadata": {
-          "Name": true,
+          "x-amz-lex:max-speech-duration-ms:*:*": false,
           "JobPostId": true,
-          "x-amz-lex:audio:max-length-ms:*:*": false,
-          "x-amz-lex:max-speech-duration-ms:*:*": false
+          "Name": true,
+          "x-amz-lex:audio:max-length-ms:*:*": false
         },
         "useLexBotDropdown": true,
         "lexV2BotName": "QuickHopBot",
         "lexV2BotAliasName": "QuickHopLiveAlias",
         "conditionMetadata": [
           {
-            "id": "3ce3dec3-7231-4620-830c-178b4ba70315",
+            "id": "70ba8b29-8b9c-47db-95a6-05209cffeb8d",
             "operator": {
               "name": "Equals",
               "value": "Equals",
@@ -69,13 +76,6 @@
             "value": "FallbackIntent"
           }
         ]
-      },
-      "Set recording and analytics behavior": {
-        "position": {
-          "x": -527.2,
-          "y": 156
-        },
-        "isFriendlyName": true
       }
     },
     "Annotations": [],
@@ -108,46 +108,6 @@
         "Errors": [
           {
             "NextAction": "68abbaf3-c1cc-4843-96a3-664bfdf79ae0",
-            "ErrorType": "NoMatchingError"
-          }
-        ]
-      }
-    },
-    {
-      "Parameters": {
-        "SSML": "Hello $.Attributes.Name ,\nPlease, waite.",
-        "LexV2Bot": {
-          "AliasArn": ""
-        },
-        "LexSessionAttributes": {
-          "Name": "$.Attributes.Name",
-          "JobPostId": "$.Attributes.JobPostId",
-          "x-amz-lex:audio:max-length-ms:*:*": "15000",
-          "x-amz-lex:max-speech-duration-ms:*:*": "30000"
-        }
-      },
-      "Identifier": "Lex_With_LLM",
-      "Type": "ConnectParticipantWithLexBot",
-      "Transitions": {
-        "NextAction": "GeneralBackendError",
-        "Conditions": [
-          {
-            "NextAction": "753589d3-6c35-4196-9f77-9f30c1c21df8",
-            "Condition": {
-              "Operator": "Equals",
-              "Operands": [
-                "FallbackIntent"
-              ]
-            }
-          }
-        ],
-        "Errors": [
-          {
-            "NextAction": "753589d3-6c35-4196-9f77-9f30c1c21df8",
-            "ErrorType": "NoMatchingCondition"
-          },
-          {
-            "NextAction": "GeneralBackendError",
             "ErrorType": "NoMatchingError"
           }
         ]
@@ -190,6 +150,46 @@
       "Type": "UpdateContactRecordingBehavior",
       "Transitions": {
         "NextAction": "Lex_With_LLM"
+      }
+    },
+    {
+      "Parameters": {
+        "SSML": "Hello $.Attributes.Name ,\nYou will have your interview with an AI. Please answer the questions as briefly as possible. Note that this call will be recorded.\nPlease wait while your call is being connected to the AI.",
+        "LexV2Bot": {
+          "AliasArn": "arn:aws:lex:ca-central-1:058264198202:bot-alias/JZMPUZR5Q6/WH9ON3462L"
+        },
+        "LexSessionAttributes": {
+          "x-amz-lex:max-speech-duration-ms:*:*": "30000",
+          "JobPostId": "$.Attributes.JobPostId",
+          "Name": "$.Attributes.Name",
+          "x-amz-lex:audio:max-length-ms:*:*": "15000"
+        }
+      },
+      "Identifier": "Lex_With_LLM",
+      "Type": "ConnectParticipantWithLexBot",
+      "Transitions": {
+        "NextAction": "GeneralBackendError",
+        "Conditions": [
+          {
+            "NextAction": "753589d3-6c35-4196-9f77-9f30c1c21df8",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "FallbackIntent"
+              ]
+            }
+          }
+        ],
+        "Errors": [
+          {
+            "NextAction": "753589d3-6c35-4196-9f77-9f30c1c21df8",
+            "ErrorType": "NoMatchingCondition"
+          },
+          {
+            "NextAction": "GeneralBackendError",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
       }
     }
   ],
