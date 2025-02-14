@@ -157,6 +157,9 @@ const PostForm = () => {
         jobKB: POST.jobKB,
         aiInterviewQuestions: POST.aiInterviewQuestions,
       });
+    } else {
+      setIsBackendData(false);
+      reset(initialValues);
     }
   }, [jobId, allPosts, reset]);
 

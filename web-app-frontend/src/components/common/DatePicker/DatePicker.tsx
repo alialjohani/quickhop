@@ -48,7 +48,11 @@ const DatePicker = <T extends FieldValues>({
       setValue(field, initialDate as PathValue<T, Path<T>>),
     [field, initialDate],
   );
-  const today = new Date();
+  const today = new Date(
+    new Date().getUTCFullYear(),
+    new Date().getUTCMonth(),
+    new Date().getUTCDate()
+  );
   // Convert to a Date object at midnight UTC
   //console.log(">>>>>> initialDate: ", initialDate?.split("T"));
   today.setDate(today.getDate());

@@ -55,26 +55,33 @@ const ListPosts = () => {
 
   // Get backend data
   useEffect(() => {
+    if (!allPosts?.data) return; // Avoid running if data is undefined
+
     const newElements: JSX.Element[] = [];
-    allPosts?.data?.map((post) => {
-      // console.log(">>> post: ", post);
+
+    // Sort posts by job ID (or any other field like date)
+    const sortedPosts = [...allPosts.data].sort((a, b) => a.id - b.id);
+
+    sortedPosts.forEach((post) => {
       if (isValidStatus(post.status, POST_STATUS)) {
         newElements.push(
           <JobPostCard
+            key={post.id}
             jobId={post.id}
             jobTitle={post.title}
             status={post.status}
             totalSelectedCandidates={post.totalSelectedCandidates}
             startDate={post.aiCallsStartingDate.split("T")[0]}
             endDate={post.aiCallsEndDate.split("T")[0]}
-          />,
+          />
         );
       } else {
         throw new Error(
-          "Job Post Status is not matching to well defined POST_STATUS.",
+          "Job Post Status is not matching to well defined POST_STATUS."
         );
       }
     });
+
     setElements(newElements);
   }, [allPosts]);
 
