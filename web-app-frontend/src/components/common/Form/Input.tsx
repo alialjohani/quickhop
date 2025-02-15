@@ -14,6 +14,7 @@ interface PropsType {
   maxLength?: number;
   isTextArea?: boolean;
   disabled?: boolean;
+  isMandatory?: boolean;
   aiFeedbackMessage?: string;
 }
 
@@ -27,19 +28,20 @@ const Input = ({
   disabled,
   isTextArea = false,
   aiFeedbackMessage,
+  isMandatory = false,
 }: PropsType): ReactNode => {
   return (
     <div className="mb-2">
       <div className="row">
-        <label htmlFor="email" className="col-sm-6 col-form-label">
-          {label}
+        <label htmlFor={id} className="col-sm-6 col-form-label">
+          {label} {isMandatory ? <span className="text-danger">*</span> : ""}
         </label>
         <div className="col-sm-12">
           {isTextArea ? (
             <textarea
               className={`form-control ${errorMessage ? "is-invalid" : ""} `}
               placeholder={label}
-              id="floatingTextarea"
+              id={id}
               {...registerObject}
               style={{ height: "200px" }}
               maxLength={maxLength}

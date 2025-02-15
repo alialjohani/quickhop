@@ -73,11 +73,11 @@ const ListPosts = () => {
             totalSelectedCandidates={post.totalSelectedCandidates}
             startDate={post.aiCallsStartingDate.split("T")[0]}
             endDate={post.aiCallsEndDate.split("T")[0]}
-          />
+          />,
         );
       } else {
         throw new Error(
-          "Job Post Status is not matching to well defined POST_STATUS."
+          "Job Post Status is not matching to well defined POST_STATUS.",
         );
       }
     });

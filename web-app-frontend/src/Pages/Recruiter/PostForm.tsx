@@ -272,6 +272,7 @@ const PostForm = () => {
                 getVALIDATION_STRING("Job title", 3, 100),
               )}
               disabled={isBackendData}
+              isMandatory={true}
             />
             <Input
               id="jobDescription"
