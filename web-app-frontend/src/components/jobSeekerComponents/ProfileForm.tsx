@@ -100,6 +100,7 @@ const ProfileForm = ({
           FIELDS_CVForm.firstName,
           getVALIDATION_STRING("First name"),
         )}
+        isMandatory={true}
       />
       <Input
         id="last_name"
@@ -110,6 +111,7 @@ const ProfileForm = ({
           FIELDS_CVForm.lastName,
           getVALIDATION_STRING("Last name"),
         )}
+        isMandatory={true}
       />
       <Input
         id="phone"
@@ -117,6 +119,7 @@ const ProfileForm = ({
         type="text"
         errorMessage={errors[FIELDS_CVForm.phone]?.message}
         registerObject={register(FIELDS_CVForm.phone, VALIDATION_PHONE)}
+        isMandatory={true}
       />
       <Input
         id="linkedin"
@@ -142,6 +145,7 @@ const ProfileForm = ({
         options={countryOptions}
         onChange={handleCountrySelection}
         initialSelectedValue={selectedCountry}
+        isMandatory={true}
       />
       <Select
         label="Region"
@@ -155,6 +159,7 @@ const ProfileForm = ({
         disabled={selectedCountry === ""}
         onChange={handleRegionSelection}
         initialSelectedValue={selectedRegion}
+        isMandatory={true}
       />
       <Input
         id="city"
@@ -165,7 +170,7 @@ const ProfileForm = ({
           FIELDS_CVForm.city,
           getVALIDATION_STRING("City"),
         )}
-        // aiFeedbackMessage={AI_FEEDBACK}
+        isMandatory={true}
       />
     </>
   );

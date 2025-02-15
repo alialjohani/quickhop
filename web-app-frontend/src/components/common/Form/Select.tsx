@@ -12,6 +12,7 @@ interface PropsType {
   options: SelectOptionType[];
   onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
   initialSelectedValue: string;
+  isMandatory?: boolean;
 }
 
 const Select = ({
@@ -23,13 +24,14 @@ const Select = ({
   options,
   onChange,
   initialSelectedValue,
+  isMandatory = false,
 }: PropsType) => {
   // console.log(">>> options= ", options);
   return (
     <div className="mb-2">
       <div className="row">
         <label htmlFor={id} className="col-sm-6 col-form-label">
-          {label}
+          {label} {isMandatory ? <span className="text-danger">*</span> : ""}
         </label>
         <div className="col-sm-12">
           <select

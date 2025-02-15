@@ -29,6 +29,7 @@ interface PropsType<T extends FieldValues> {
   registerObject: UseFormRegisterReturn;
   disabled?: boolean;
   isRestrictedForFutureDates?: boolean;
+  isMandatory?: boolean;
   onChange?: () => void;
 }
 
@@ -40,6 +41,7 @@ const DatePicker = <T extends FieldValues>({
   setValue,
   disabled,
   isRestrictedForFutureDates = true,
+  isMandatory = false,
   onChange,
 }: PropsType<T>) => {
   useEffect(
@@ -74,7 +76,7 @@ const DatePicker = <T extends FieldValues>({
       <div className="mb-2">
         <div className="row">
           <label htmlFor="email" className="col-sm-6 col-form-label">
-            {label}
+            {label} {isMandatory ? <span className="text-danger">*</span> : ""}
           </label>
           <div className="col-sm-12">
             <Flatpickr

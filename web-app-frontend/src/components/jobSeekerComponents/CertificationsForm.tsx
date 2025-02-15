@@ -109,7 +109,7 @@ const CertificationsForm = ({
 
         const initEndDate: string = isBackendData
           ? (getValues(FIELDS_CVCertification.certifications)[index]
-              .expirationDate ?? "")
+            .expirationDate ?? "")
           : (newFormValues.expirationDate ?? "");
 
         return (
@@ -132,6 +132,7 @@ const CertificationsForm = ({
                   `${FIELDS_CVCertification.certifications}.${index}.${FIELDS_CVCertification.Name}`,
                   getVALIDATION_STRING("Certification name"),
                 )}
+                isMandatory={true}
               />
               <Input
                 label="Issuing Organization"
@@ -145,6 +146,7 @@ const CertificationsForm = ({
                   `${FIELDS_CVCertification.certifications}.${index}.${FIELDS_CVCertification.IssuingOrganization}`,
                   getVALIDATION_STRING("Issuing organization"),
                 )}
+                isMandatory={true}
               />
               <DatePicker<JobSeekerCVFormType>
                 field={`${FIELDS_CVCertification.certifications}.${index}.${FIELDS_CVCertification.IssueDate}`}
@@ -174,6 +176,7 @@ const CertificationsForm = ({
                     `${FIELDS_CVCertification.certifications}.${index}.${FIELDS_CVCertification.ExpirationDate}`,
                   )
                 }
+                isMandatory={true}
               />
               <DatePicker<JobSeekerCVFormType>
                 field={`${FIELDS_CVCertification.certifications}.${index}.${FIELDS_CVCertification.ExpirationDate}`}
@@ -248,6 +251,7 @@ const CertificationsForm = ({
                   getVALIDATION_STRING("Description", 3, 400),
                 )}
                 isTextArea
+                isMandatory={true}
               />
             </div>
             {aiFeedbackMessages && (

@@ -124,6 +124,7 @@ const EducationForms = ({
                   `${FIELDS_CVEducations.Education}.${index}.${FIELDS_CVEducations.educations_School}`,
                   getVALIDATION_STRING("School name"),
                 )}
+                isMandatory={true}
               />
               <Input
                 label="School Location"
@@ -137,6 +138,7 @@ const EducationForms = ({
                   `${FIELDS_CVEducations.Education}.${index}.${FIELDS_CVEducations.educations_Location}`,
                   getVALIDATION_STRING("Location"),
                 )}
+                isMandatory={true}
               />
               <DatePicker<JobSeekerCVFormType>
                 field={`${FIELDS_CVEducations.Education}.${index}.${FIELDS_CVEducations.educations_StartDate}`}
@@ -166,6 +168,7 @@ const EducationForms = ({
                     `${FIELDS_CVEducations.Education}.${index}.${FIELDS_CVEducations.educations_EndDate}`,
                   )
                 }
+                isMandatory={true}
               />
               <DatePicker<JobSeekerCVFormType>
                 field={`${FIELDS_CVEducations.Education}.${index}.${FIELDS_CVEducations.educations_EndDate}`}
@@ -220,6 +223,7 @@ const EducationForms = ({
                   `${FIELDS_CVEducations.Education}.${index}.${FIELDS_CVEducations.educations_Degree}`,
                   getVALIDATION_STRING("Degree"),
                 )}
+                isMandatory={true}
               />
               <Input
                 label="Field of Study"
@@ -233,6 +237,7 @@ const EducationForms = ({
                   `${FIELDS_CVEducations.Education}.${index}.${FIELDS_CVEducations.educations_FieldStudy}`,
                   getVALIDATION_STRING("Field of study"),
                 )}
+                isMandatory={true}
               />
               <Input
                 label="Description"
@@ -247,6 +252,7 @@ const EducationForms = ({
                   getVALIDATION_STRING("Description", 3, 600),
                 )}
                 isTextArea
+                isMandatory={true}
               />
             </div>
             {aiFeedbackMessages && (

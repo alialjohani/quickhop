@@ -123,6 +123,7 @@ const WorkForms = ({
                   `${FIELDS_CVWorks.works}.${index}.${FIELDS_CVWorks.work_JobTitle}`,
                   getVALIDATION_STRING("Job title"),
                 )}
+                isMandatory={true}
               />
               <Input
                 label="Company Name"
@@ -136,6 +137,7 @@ const WorkForms = ({
                   `${FIELDS_CVWorks.works}.${index}.${FIELDS_CVWorks.work_CompanyName}`,
                   getVALIDATION_STRING("Company name"),
                 )}
+                isMandatory={true}
               />
               <Input
                 label="Location"
@@ -149,6 +151,7 @@ const WorkForms = ({
                   `${FIELDS_CVWorks.works}.${index}.${FIELDS_CVWorks.work_Location}`,
                   getVALIDATION_STRING("Location"),
                 )}
+                isMandatory={true}
               />
               <DatePicker<JobSeekerCVFormType>
                 field={`${FIELDS_CVWorks.works}.${index}.${FIELDS_CVWorks.work_StartDate}`}
@@ -178,6 +181,7 @@ const WorkForms = ({
                     `${FIELDS_CVWorks.works}.${index}.${FIELDS_CVWorks.work_EndDate}`,
                   )
                 }
+                isMandatory={true}
               />
               <DatePicker<JobSeekerCVFormType>
                 field={`${FIELDS_CVWorks.works}.${index}.${FIELDS_CVWorks.work_EndDate}`}
@@ -233,6 +237,7 @@ const WorkForms = ({
                   getVALIDATION_STRING("Description", 3, 800),
                 )}
                 isTextArea
+                isMandatory={true}
               />
             </div>
             {aiFeedbackMessages && (

@@ -285,6 +285,7 @@ const PostForm = () => {
               )}
               isTextArea
               disabled={isBackendData}
+              isMandatory={true}
             />
             <Input
               id="jobResponsibility"
@@ -297,6 +298,7 @@ const PostForm = () => {
               )}
               isTextArea
               disabled={isBackendData}
+              isMandatory={true}
             />
           </AccordionItem>
           <AccordionItem
@@ -392,6 +394,7 @@ const PostForm = () => {
                   FIELDS_PostForm.aiCallsEndDate,
                 )
               }
+              isMandatory={true}
             />
             <DatePicker<RecruiterJobPostFormType>
               field={FIELDS_PostForm.aiCallsEndDate}
@@ -420,6 +423,7 @@ const PostForm = () => {
                   FIELDS_PostForm.aiCallsEndDate,
                 )
               }
+              isMandatory={true}
             />
             <Input
               id={FIELDS_PostForm.jobKB}
