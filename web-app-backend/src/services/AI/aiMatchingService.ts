@@ -81,17 +81,17 @@ export const aiMatchingService = async (
                 2. **Assign a Matching Score**:
                    - If all required qualifications are met, evaluate the CV based on the job posting criteria and calculate a **Matching Score**:
                      - **Matching Score Formula**:
-                       - **Education**: Weighted at 30% of the total score.
+                       - **Education**: Weighted at 25% of the total score.
                          - Match CV education details against:
                            - Job Description (50% match)
                            - Preferred Qualifications (30% match)
                            - Job Responsibility (20% match)
-                       - **Work History**: Weighted at 40% of the total score.
+                       - **Work History**: Weighted at 65% of the total score.
                          - Match CV work history details against:
                            - Job Responsibility (60% match)
                            - Job Description (30% match)
                            - Preferred Qualifications (10% match)
-                       - **Certifications**: Weighted at 30% of the total score.
+                       - **Certifications**: Weighted at 10% of the total score.
                          - Match CV certifications against:
                            - Preferred Qualifications (50% match)
                            - Job Description (30% match)
