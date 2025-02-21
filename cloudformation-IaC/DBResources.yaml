@@ -30,6 +30,8 @@ Resources:
       PubliclyAccessible: true
       DBName: !Ref dbName
       Port: !Ref dbPort
+      MultiAZ: false               # Avoids replication
+      BackupRetentionPeriod: 0     # Disables automated snapshots
 
   ## Save data to SSM to be used later in .env production (production environment variables)
   QuickHopDBHostParameterPassword:
