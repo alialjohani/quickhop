@@ -15,7 +15,7 @@ import dotenv from 'dotenv'
 dotenv.config();
 
 const S3_BUCKET = process.env.S3_BUCKET ?? 'quickhop';
-const S3_RECORDING_BASE_PREFIX = process.env.s3_RECORDING_BASE_PREFIX ?? 'connect/testingenv/CallRecordings/ivr/';
+const S3_RECORDING_BASE_PREFIX = process.env.S3_RECORDING_BASE_PREFIX ?? 'connect/testingenv/CallRecordings/ivr/';
 
 const AWS_S3_TAG_RECRUITER = 'allowed-email-recruiter'; // This defined in Backed Web App, same var name
 const AWS_S3_TAG_JOBSEEKER = 'allowed-email-JOBSEEKER'; // This defined in Backed Web App, same var name
