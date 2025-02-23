@@ -1,4 +1,7 @@
 Parameters:
+  VPC:
+    Type: "AWS::EC2::VPC::Id"
+    Description: The default VPC ID.
   dbPort:
     Type: Number
     Description: The DB port number passed from the parent template.
@@ -7,6 +10,7 @@ Resources:
   FrontendAppSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
+      VpcId: !Ref VPC
       GroupName: "quickhop-frontend-ec2-sg"
       GroupDescription: "Allow SSH and HTTP access"
       SecurityGroupIngress:
@@ -22,6 +26,7 @@ Resources:
   BackendAppSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
+      VpcId: !Ref VPC
       GroupName: "quickhop-backend-ec2-sg"
       GroupDescription: "Allow SSH and HTTP access"
       SecurityGroupIngress:
@@ -37,21 +42,23 @@ Resources:
   DBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
+      VpcId: !Ref VPC
       GroupName: "quickhop-db-sg"
       GroupDescription: "quickhop-db-sg"
       SecurityGroupIngress:
         - IpProtocol: tcp
-          FromPort: !Ref dbPort 
+          FromPort: !Ref dbPort
           ToPort: !Ref dbPort
           SourceSecurityGroupId: !GetAtt BackendAppSecurityGroup.GroupId
         - IpProtocol: tcp
-          FromPort: !Ref dbPort 
+          FromPort: !Ref dbPort
           ToPort: !Ref dbPort
-          CidrIp: 0.0.0.0/0  # Allows anyone to connect (Use only for testing)
+          CidrIp: 0.0.0.0/0 # Allows anyone to connect (Use only for testing)
 
   BackendLoadBalancerSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
+      VpcId: !Ref VPC
       GroupName: "quickhop-back-lb-sg"
       GroupDescription: "quickhop-back-lb-sg"
       SecurityGroupIngress:
@@ -63,6 +70,7 @@ Resources:
   FrontendLoadBalancerSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
+      VpcId: !Ref VPC
       GroupName: "quickhop-front-lb-sg"
       GroupDescription: "quickhop-front-lb-sg"
       SecurityGroupIngress:

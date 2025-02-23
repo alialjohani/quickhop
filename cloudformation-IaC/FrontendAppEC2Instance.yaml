@@ -5,6 +5,9 @@ Parameters:
   ec2InstanceImageId:
     Type: String
     Description: "The image ID of the EC2 instance (Note: each region has different image ID)."
+  Subnet1:
+    Type: "AWS::EC2::Subnet::Id"
+    Description: "Public subnet."
   mainProjectFolderName:
     Type: String
     Description: "The name of the main folder that has the project ('quickhop')"
@@ -28,6 +31,7 @@ Resources:
       IamInstanceProfile: !ImportValue QuickhopEC2FrontendProfile
       KeyName: !Ref awsKeyPair
       ImageId: !Ref ec2InstanceImageId
+      SubnetId: !Ref Subnet1
       Tags:
         - Key: Name
           Value: FrontendAppEC2Instance

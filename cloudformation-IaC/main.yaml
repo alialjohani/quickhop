@@ -99,7 +99,7 @@ Parameters:
   recruitmentPhone:
     Type: String
     Description: Phone number assigned to the AWS Connect main IVR to receive the interview calls.
-  
+
 Resources:
   CognitoResources:
     Type: AWS::CloudFormation::Stack
@@ -108,7 +108,7 @@ Resources:
       Parameters:
         awsRegion: !Ref awsRegion
         cognitoUserPoolDomain: !Ref cognitoUserPoolDomain
-        cognitoRedirectUri: !Ref cognitoRedirectUri        
+        cognitoRedirectUri: !Ref cognitoRedirectUri
 
   SSMParameters:
     Type: AWS::CloudFormation::Stack
@@ -138,7 +138,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub "https://${awsS3BucketName}.s3.${awsRegion}.amazonaws.com/RoleResources.yaml"
-  
+
   DynamodbResources:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -153,16 +153,19 @@ Resources:
     Properties:
       TemplateURL: !Sub "https://${awsS3BucketName}.s3.${awsRegion}.amazonaws.com/SGResources.yaml"
       Parameters:
+        VPC: !Ref VPC
         dbPort: !Ref dbPort
 
   DBResources:
     Type: AWS::CloudFormation::Stack
-    DependsOn: 
+    DependsOn:
       - SGResources
       - SSMParameters
     Properties:
       TemplateURL: !Sub "https://${awsS3BucketName}.s3.${awsRegion}.amazonaws.com/DBResources.yaml"
       Parameters:
+        Subnet1: !Ref Subnet1
+        Subnet2: !Ref Subnet2
         dbIdentifier: !Ref dbIdentifier
         dbName: !Ref dbName
         dbUser: !Ref dbUser
@@ -170,7 +173,7 @@ Resources:
 
   LambdaResources:
     Type: AWS::CloudFormation::Stack
-    DependsOn: 
+    DependsOn:
       - RoleResources
       - DBResources
     Properties:
@@ -225,6 +228,7 @@ Resources:
         awsRegion: !Ref awsRegion
         awsS3BucketName: !Ref awsS3BucketName
         ec2InstanceImageId: !Ref ec2InstanceImageId
+        Subnet1: !Ref Subnet1
         mainProjectFolderName: !Ref mainProjectFolderName
         backendProjectFolderName: !Ref backendProjectFolderName
         lambdaProjectFolderName: !Ref lambdaProjectFolderName
@@ -241,11 +245,11 @@ Resources:
       Parameters:
         awsRegion: !Ref awsRegion
         ec2InstanceImageId: !Ref ec2InstanceImageId
+        Subnet1: !Ref Subnet1
         mainProjectFolderName: !Ref mainProjectFolderName
         frontendProjectFolderName: !Ref frontendProjectFolderName
         repoGit: !Ref repoGit
         awsKeyPair: !Ref awsKeyPair
-
 
   TargetGroupResources:
     Type: AWS::CloudFormation::Stack
@@ -256,7 +260,6 @@ Resources:
       TemplateURL: !Sub "https://${awsS3BucketName}.s3.${awsRegion}.amazonaws.com/TargetGroupResources.yaml"
       Parameters:
         VPC: !Ref VPC
-
 
   LoadBalancerResources:
     Type: AWS::CloudFormation::Stack

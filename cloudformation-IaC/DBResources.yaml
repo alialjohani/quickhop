@@ -1,21 +1,33 @@
 Parameters:
+  Subnet1:
+    Type: "AWS::EC2::Subnet::Id"
+    Description: "Public subnet."
+  Subnet2:
+    Type: "AWS::EC2::Subnet::Id"
+    Description: "Public subnet."
   dbIdentifier:
     Type: String
     Description: To be passed from the parent template.
-
   dbName:
     Type: String
     Description: To be passed from the parent template.
-
   dbUser:
     Type: String
     Description: To be passed from the parent template.
-
   dbPort:
     Type: Number
     Description: To be passed from the parent template.
 
 Resources:
+  QuickHopDBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: "Subnet for QuickHop RDS"
+      SubnetIds:
+        - !Ref Subnet1
+        - !Ref Subnet2
+      DBSubnetGroupName: "quickhop-db-subnet-group"
+
   QuickHopDB:
     Type: AWS::RDS::DBInstance
     Properties:
@@ -27,11 +39,12 @@ Resources:
       ManageMasterUserPassword: true
       VPCSecurityGroups:
         - !ImportValue DBSecurityGroupId
+      DBSubnetGroupName: !Ref QuickHopDBSubnetGroup # Reference the Subnet Group here
       PubliclyAccessible: true
       DBName: !Ref dbName
       Port: !Ref dbPort
-      MultiAZ: false               # Avoids replication
-      BackupRetentionPeriod: 0     # Disables automated snapshots
+      MultiAZ: false # Avoids replication
+      BackupRetentionPeriod: 0 # Disables automated snapshots
 
   ## Save data to SSM to be used later in .env production (production environment variables)
   QuickHopDBHostParameterPassword:
@@ -40,7 +53,7 @@ Resources:
       Name: "/quickhop/dbPassword"
       Type: String
       Value: !GetAtt QuickHopDB.MasterUserSecret.SecretArn
-  
+
   QuickHopDBHostParameterEndpoint:
     Type: AWS::SSM::Parameter
     Properties:
@@ -57,5 +70,5 @@ Outputs:
   DBHost:
     Description: "DB endpoint/DB Host"
     Value: !GetAtt QuickHopDB.Endpoint.Address
-    Export: 
+    Export:
       Name: DBHost
