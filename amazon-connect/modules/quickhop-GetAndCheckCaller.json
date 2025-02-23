@@ -423,7 +423,7 @@
       "Parameters": {
         "StoreInput": "True",
         "InputTimeLimitSeconds": "5",
-        "Text": "Please, enter the one time access key followed by #.",
+        "Text": "Please, enter the one time access key then press pound.",
         "DTMFConfiguration": {
           "DisableCancelKey": "False",
           "InputTerminationSequence": "#"
