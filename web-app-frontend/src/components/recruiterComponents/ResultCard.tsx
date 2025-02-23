@@ -80,7 +80,7 @@ const ResultCard = ({ resultDetails }: { resultDetails: PostResultType }) => {
 
   const bodyCard: Dictionary[] = [
     { "Phone Number: ": resultDetails.JobSeekerPhone },
-    { "Matching Score: ": resultDetails.MatchingScore.toString() },
+    { "Matching Result: ": "Passed" },
     {
       "Interview Date: ": isCallMade
         ? resultDetails.InterviewDate?.split("T")[0]
