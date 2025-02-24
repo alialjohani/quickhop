@@ -13,7 +13,7 @@
     },
     {
         "ParameterKey": "awsKeyPair",
-        "ParameterValue": "quickhop_key"
+        "ParameterValue": "quickhop_keypair"
     },
     {
         "ParameterKey": "ec2InstanceImageId",
@@ -41,7 +41,7 @@
     },
     {
         "ParameterKey": "allowedOrigin",
-        "ParameterValue": "https://quickhop.infotechlab.online"
+        "ParameterValue": "https://frontend.infotechlab.online"
     },
     {
         "ParameterKey": "cognitoUserPoolDomain",
@@ -49,7 +49,7 @@
     },
     {
         "ParameterKey": "cognitoRedirectUri",
-        "ParameterValue": "https://quickhop.infotechlab.online/callback"
+        "ParameterValue": "https://frontend.infotechlab.online/callback"
     },
     {
         "ParameterKey": "googleClientId",
@@ -65,15 +65,15 @@
     },
     {
         "ParameterKey": "dbIdentifier",
-        "ParameterValue": ""
+        "ParameterValue": "quickhopidentifier"
     },
     {
         "ParameterKey": "dbName",
-        "ParameterValue": ""
+        "ParameterValue": "quickhopdb"
     },
     {
         "ParameterKey": "dbUser",
-        "ParameterValue": ""
+        "ParameterValue": "quickhobdbadmin"
     },
     {
         "ParameterKey": "recruitmentPhone",
